@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
   
 
     public LayerMask whatStopsMove;
+    public LayerMask whatSpawnsBreakThrough;
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +39,10 @@ public class PlayerController : MonoBehaviour
                 }
                 
             } 
+        }
+
+        if (Physics2D.OverlapCircle(transform.position, 0.2f, whatSpawnsBreakThrough) ){
+            
         }
     }
 }
