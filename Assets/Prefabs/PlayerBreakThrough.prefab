@@ -50,7 +50,7 @@ MonoBehaviour:
   currentHP: 90
   maxHP: 100
   resistance: 0
-  power: 20
+  power: 50
   speed: 0
 --- !u!1 &1790259843852075834
 GameObject:

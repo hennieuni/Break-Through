@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using TMPro; 
+using UnityEngine.SceneManagement;
+using System.IO;
 
 public enum BattleState {START, PLAYERTURN, ENEMYTURN, WON, LOST, Between }
 
@@ -23,8 +25,12 @@ public class BattleSystem : MonoBehaviour
     public InfoPanel playerInfoPanel;
     public InfoPanel enemyInfoPanel;
 
+    string canSpawnFile;
+
     void Start()
     {
+        canSpawnFile = Application.dataPath + "/Saves/CanSpawn.txt";
+
         state = BattleState.START; 
         StartCoroutine(SetupBattle());
 
@@ -66,7 +72,7 @@ public class BattleSystem : MonoBehaviour
         bool isDead = enemyBreakThrough.TakeDamage(playerBreakThrough.power);
         
         enemyInfoPanel.SetHP(enemyBreakThrough, enemyBreakThrough.currentHP);
-        dialogText.text = playerBreakThrough.nameBT + " delt " + playerBreakThrough.power + " damage.";
+        dialogText.text = playerBreakThrough.nameBT + " dealt " + playerBreakThrough.power + " damage.";
 
         yield return new WaitForSeconds(2f);
 
@@ -83,8 +89,11 @@ public class BattleSystem : MonoBehaviour
     void EndBattle(){
         if (state == BattleState.WON){
             dialogText.text = "You defeated " + enemyBreakThrough.nameBT + "!";
+            SaveNextSpawn();
+            SceneManager.LoadScene(1); 
         }else{
-            dialogText.text = "You where defeated :(";
+            dialogText.text = "You were defeated :(";
+            SceneManager.LoadScene(0);
         }
     }
 
@@ -107,5 +116,19 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
 
+    }
+
+     void SaveNextSpawn(){
+
+        int nNextSpawn = 4;
+
+        if (!File.Exists(canSpawnFile)){
+            File.WriteAllText(canSpawnFile, "" + nNextSpawn);
+        }else{
+            using (StreamWriter writer = new StreamWriter(canSpawnFile,false)){
+                writer.WriteLine("" + nNextSpawn);
+            }
+        }
+        
     }
 }
