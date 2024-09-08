@@ -29,8 +29,6 @@ public class PlayerController : MonoBehaviour
         playerPosFile = Application.dataPath + "/Saves/PlayerPos.txt";
         LoadPlayerPos();
 
-        canSpawnFile = Application.dataPath + "/Saves/CanSpawn.txt";
-       // LoadCanSpawnCount();
         nextSpawnCount = 4;
 
         
@@ -121,11 +119,4 @@ public class PlayerController : MonoBehaviour
         movePoint.position = transform.position;
     }
 
-    void LoadCanSpawnCount(){
-       
-        using (StreamReader reader = new StreamReader(canSpawnFile)){
-            nextSpawnCount =  int.Parse(reader.ReadLine());
-        }
-
-    }
 }
