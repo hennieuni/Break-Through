@@ -89,7 +89,6 @@ public class BattleSystem : MonoBehaviour
     void EndBattle(){
         if (state == BattleState.WON){
             dialogText.text = "You defeated " + enemyBreakThrough.nameBT + "!";
-            SaveNextSpawn();
             SceneManager.LoadScene(1); 
         }else{
             dialogText.text = "You were defeated :(";
@@ -116,19 +115,5 @@ public class BattleSystem : MonoBehaviour
             PlayerTurn();
         }
 
-    }
-
-     void SaveNextSpawn(){
-
-        int nNextSpawn = 4;
-
-        if (!File.Exists(canSpawnFile)){
-            File.WriteAllText(canSpawnFile, "" + nNextSpawn);
-        }else{
-            using (StreamWriter writer = new StreamWriter(canSpawnFile,false)){
-                writer.WriteLine("" + nNextSpawn);
-            }
-        }
-        
     }
 }
