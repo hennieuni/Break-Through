@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/StartupScreen.unity
     guid: fb5430f9d238ccd409d4da43931e16c9
   - enabled: 1
-    path: Assets/Scenes/Game.unity
+    path: Assets/Scenes/Route1.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
     path: Assets/Scenes/Battle.unity

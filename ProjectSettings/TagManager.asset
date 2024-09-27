@@ -41,12 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BreakThroughSpawns
+    uniqueID: 4206225565
+    locked: 0
+  - name: decor
+    uniqueID: 110458671
+    locked: 0
   - name: Front
     uniqueID: 4123158385
     locked: 0
   - name: Player
     uniqueID: 1696938057
-    locked: 0
-  - name: BreakThroughSpawns
-    uniqueID: 4206225565
     locked: 0
