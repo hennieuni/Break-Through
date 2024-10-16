@@ -7,12 +7,13 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    public float moveSpeed = 15f;
     public Transform movePoint;
   
 
     public LayerMask whatStopsMove;
     public LayerMask whatSpawnsBreakThrough;
+    public LayerMask whatLoadsTown1;
     public string playerPosFile;
 
     int nextSpawnCount;
@@ -66,6 +67,16 @@ public class PlayerController : MonoBehaviour
                 
             }
             
+        }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsTown1)){  //loads town 1
+
+             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
+                Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
+                ChangePlayerPos(posAfterLoad);
+                SceneManager.LoadScene(3);        
+            }
+
         }else{
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
 
@@ -99,9 +110,23 @@ public class PlayerController : MonoBehaviour
         }else{
             using (StreamWriter writer = new StreamWriter(playerPosFile,false)){
             writer.WriteLine(playerxy);
-        }
+            }
         }
         
+    }
+
+    void ChangePlayerPos(Vector3 newPos){
+        float playerx = newPos.x; 
+        float playery = newPos.y;
+        string playerxy =  playerx + "," + playery;
+
+        if (!File.Exists(playerPosFile)){
+            File.WriteAllText(playerPosFile, playerxy);
+        }else{
+            using (StreamWriter writer = new StreamWriter(playerPosFile,false)){
+            writer.WriteLine(playerxy);
+            }
+        }
     }
 
     void LoadPlayerPos(){
