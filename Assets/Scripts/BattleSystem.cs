@@ -8,6 +8,7 @@ using System.IO;
 using System;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
+using UnityEditor.PackageManager;
 
 public enum BattleState {START, PLAYERTURN, ENEMYTURN, WON, LOST, Between }
 
@@ -32,7 +33,11 @@ public class BattleSystem : MonoBehaviour
 
     Breakthrough[] BreakthroughList;
 
+    Breakthrough[] PlayerParty;
+
     public UnityEngine.TextAsset textAssetData;
+    public UnityEngine.TextAsset playerPartyData;
+
 
     void loadListBT(){
        string[] data =  textAssetData.text.Split(new string[]{","}, StringSplitOptions.None);
@@ -76,24 +81,84 @@ public class BattleSystem : MonoBehaviour
             
             //add sprite location somehow her
 
-            Debug.Log("here " +i);
+        }     
+    }
 
-        }
+    void ReadPlayerBTCSV(){
+        string[] btString = playerPartyData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
+
+        int leng = btString.Length;
+
+        PlayerParty = new Breakthrough[leng];
 
         
+
+        for (int i =1; i< leng-1; i++){
+           
+            
+            string[] stats = btString[i].Split(new string[] {","}, StringSplitOptions.None);
+             
+            PlayerParty[i] = new Breakthrough();
+             
+            PlayerParty[i] = levelAdjusted(BreakthroughList[int.Parse(stats[0])], int.Parse(stats[2]));
+             
+            PlayerParty[i].currentHP = int.Parse(stats[1]);
+             
+            //add sprite location somehow her
+
+        }
+       
+    }
+
+    Breakthrough levelAdjusted(Breakthrough bt, int level){
+
+        //(Level 100 stat / 4) + ( ¾ level 100 stat * level/100  )
+
+        Breakthrough adjustedBT = new Breakthrough();
+
+        adjustedBT = bt;
+        adjustedBT.maxHP = adjustToLevel(bt.maxHP, level);
+        adjustedBT.resistance = adjustToLevel(bt.resistance, level);
+        adjustedBT.damage = adjustToLevel(bt.damage, level);
+        adjustedBT.speed = adjustToLevel(bt.resistance, level);
+        adjustedBT.resistance = adjustToLevel(bt.resistance, level);
+
+        return adjustedBT;
+    }
+
+    int adjustToLevel(int val, int level){
+        float corrected = (val/4)+(3/4*val*(level/100));
+        //Debug.Log((int)Math.Floor(corrected));
+        return (int)Math.Floor(corrected);
     }
 
     IEnumerator SetupBattle(){
         ReadCSV();
+        ReadPlayerBTCSV();
+        
+        GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
+        //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
+        playerBreakThrough = PlayerParty[1];
+        
+         Debug.Log("here");
+
 
         
-
-        GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
-        playerBreakThrough = playerGO.GetComponent<Breakthrough>();
-       // playerBreakThrough.nameBT = BreakthroughList[1].nameBT;
+        System.Random random = new System.Random();
+        int randomNumber = random.Next(1, 2); 
+        //Debug.Log(randomNumber);
 
         GameObject enemyGO = Instantiate (enemyPrefab, enemyBattlestation);
-        enemyBreakThrough = enemyGO.GetComponent<Breakthrough>();
+
+        int enemyLvl = 1;
+        enemyBreakThrough = levelAdjusted(BreakthroughList[randomNumber], enemyLvl);
+        enemyBreakThrough.currentHP =  BreakthroughList[randomNumber].maxHP;
+        enemyBreakThrough.levelBT = enemyLvl;
+        
+        
+        
+        
+
 
         dialogText.text = "You descovered the " + enemyBreakThrough.nameBT + "!";
 
