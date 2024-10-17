@@ -9,8 +9,15 @@ public class Breakthrough : MonoBehaviour
     public int currentHP;
     public int maxHP;
     public int resistance;
-    public int power;
+    public int damage;
     public int speed;
+    public string moveIDs;
+    public string ability;
+    public string spawnLocations;
+    public string school;
+    public int evolveLvl;
+    public string discription;
+    public string spriteLocation;
 
     public bool TakeDamage(int dmg){
         currentHP-= dmg;
