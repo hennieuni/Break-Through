@@ -178,6 +178,8 @@ public class BattleSystem : MonoBehaviour
     }
 
     public void OnAttackBtn(){
+        
+
         if (state != BattleState.PLAYERTURN){
             return;
         }
