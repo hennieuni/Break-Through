@@ -26,6 +26,8 @@ public class BattleSystem : MonoBehaviour
 
     public TMP_Text dialogText;
 
+    public TMP_Text moveText;
+
     public InfoPanel playerInfoPanel;
     public InfoPanel enemyInfoPanel;
 
@@ -34,9 +36,13 @@ public class BattleSystem : MonoBehaviour
     Breakthrough[] BreakthroughList;
 
     Breakthrough[] PlayerParty;
+    Move[] moveList;
+    public GameObject attackOptions;
+    public GameObject battleOptions;
 
     public UnityEngine.TextAsset textAssetData;
     public UnityEngine.TextAsset playerPartyData;
+    public UnityEngine.TextAsset movesData;
 
 
     void loadListBT(){
@@ -71,8 +77,17 @@ public class BattleSystem : MonoBehaviour
             BreakthroughList[i].maxHP = int.Parse(stats[2]);         
             BreakthroughList[i].resistance = int.Parse(stats[3]);       
             BreakthroughList[i].damage = int.Parse(stats[4]);          
-            BreakthroughList[i].speed = int.Parse(stats[5]);         
-            BreakthroughList[i].moveIDs = stats[6];          
+            BreakthroughList[i].speed = int.Parse(stats[5]);
+
+            string[] knowMoves = stats[6].Split(new string[] {"-"}, StringSplitOptions.None);
+
+            BreakthroughList[i].moveIDs[0] = moveList[int.Parse(knowMoves[0])];
+            BreakthroughList[i].moveIDs[1] = moveList[int.Parse(knowMoves[1])];
+            BreakthroughList[i].moveIDs[2] = moveList[int.Parse(knowMoves[2])];
+            BreakthroughList[i].moveIDs[3] = moveList[int.Parse(knowMoves[3])];
+
+            Debug.Log("known move" + knowMoves[0]+knowMoves[1]+knowMoves[2]+ knowMoves[3]);
+
             BreakthroughList[i].ability = stats[7];          
             BreakthroughList[i].spawnLocations = stats[8];      
             BreakthroughList[i].school = stats[9];
@@ -103,12 +118,37 @@ public class BattleSystem : MonoBehaviour
             PlayerParty[i] = levelAdjusted(BreakthroughList[int.Parse(stats[0])], int.Parse(stats[2]));
              
             PlayerParty[i].currentHP = int.Parse(stats[1]);
+            PlayerParty[i].levelBT = int.Parse(stats[2]);
              
             //add sprite location somehow her
 
         }
        
     }
+
+    void ReadMoves(){
+        string[] moveString = movesData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
+
+        int leng = moveString.Length;
+
+        moveList = new Move[leng];
+
+        for (int i =1; i< leng-1; i++){
+            
+            string[] stats = moveString[i].Split(new string[] {","}, StringSplitOptions.None);
+
+            moveList[i] = new Move();
+
+            moveList[i].nameM = stats[1];
+            moveList[i].power =  int.Parse(stats[2]);
+            moveList[i].type = stats[3];
+            moveList[i].effect = stats[4];
+            moveList[i].accuracy =  int.Parse(stats[5]);
+            moveList[i].description = stats[6]; 
+        }
+    }
+
+    
 
     Breakthrough levelAdjusted(Breakthrough bt, int level){
 
@@ -123,7 +163,7 @@ public class BattleSystem : MonoBehaviour
         adjustedBT.speed = adjustToLevel(bt.resistance, level);
         
 
-        Debug.Log("resistance " +adjustedBT.resistance);
+        //Debug.Log("resistance " +adjustedBT.resistance);
         return adjustedBT;
     }
 
@@ -134,12 +174,14 @@ public class BattleSystem : MonoBehaviour
     }
 
     IEnumerator SetupBattle(){
+        ReadMoves();
         ReadCSV();
         ReadPlayerBTCSV();
         
         GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
         //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
         playerBreakThrough = PlayerParty[1];
+        
 
 
         
@@ -149,16 +191,10 @@ public class BattleSystem : MonoBehaviour
 
         GameObject enemyGO = Instantiate (enemyPrefab, enemyBattlestation);
 
-        int enemyLvl = 1;
+        int enemyLvl = playerBreakThrough.levelBT;
         enemyBreakThrough = levelAdjusted(BreakthroughList[randomNumber], enemyLvl);
         enemyBreakThrough.currentHP =  BreakthroughList[randomNumber].maxHP;
         enemyBreakThrough.levelBT = enemyLvl;
-       
-        
-        
-        
-        
-
 
         dialogText.text = "You descovered the " + enemyBreakThrough.nameBT + "!";
 
@@ -179,20 +215,51 @@ public class BattleSystem : MonoBehaviour
 
     public void OnAttackBtn(){
         
-
         if (state != BattleState.PLAYERTURN){
             return;
         }
-        state = BattleState.Between;
-        StartCoroutine(PlayerAttack());
+        attackOptions.SetActive(true);
+        battleOptions.SetActive(false);
+        
+        //StartCoroutine(PlayerAttack());
     }
 
-    IEnumerator PlayerAttack(){
+    public void OnMove1Btn(){
+        state = BattleState.Between;
+        StartCoroutine(PlayerAttack(1));
+    }
+
+     public void OnMove2Btn(){
+        state = BattleState.Between;
+        StartCoroutine(PlayerAttack(2));
+    }
+
+     public void OnMove3Btn(){
+        state = BattleState.Between;
+        StartCoroutine(PlayerAttack(3));
+    }
+
+     public void OnMove4Btn(){
+        state = BattleState.Between;
+        StartCoroutine(PlayerAttack(4));
+    }
+
+
+
+
+    IEnumerator PlayerAttack(int moveNumber){
         
-        bool isDead = enemyBreakThrough.TakeDamage(playerBreakThrough.damage);
+        //Debug.Log("move used " + playerBreakThrough.moveIDs[moveNumber-1].nameM);
+        bool isDead = enemyBreakThrough.TakeDamage(playerBreakThrough.damage * playerBreakThrough.moveIDs[moveNumber-1].power);
         
         enemyInfoPanel.SetHP(enemyBreakThrough, enemyBreakThrough.currentHP);
-        dialogText.text = playerBreakThrough.nameBT + " dealt " + playerBreakThrough.damage/enemyBreakThrough.resistance + " damage.";
+        moveText.text = playerBreakThrough.nameBT + " used " + playerBreakThrough.moveIDs[moveNumber-1].nameM;
+        yield return new WaitForSeconds(1f);
+
+        attackOptions.SetActive(false);
+        battleOptions.SetActive(true);
+
+        dialogText.text = playerBreakThrough.nameBT + " dealt " + playerBreakThrough.damage*playerBreakThrough.moveIDs[moveNumber-1].power/enemyBreakThrough.resistance + " damage.";
 
         yield return new WaitForSeconds(2f);
 
@@ -206,12 +273,14 @@ public class BattleSystem : MonoBehaviour
 
     }
 
-    void EndBattle(){
+    IEnumerator EndBattle(){
         if (state == BattleState.WON){
             dialogText.text = "You defeated " + enemyBreakThrough.nameBT + "!";
+            yield return new WaitForSeconds(1f);
             SceneManager.LoadScene(1); 
         }else{
             dialogText.text = "You were defeated :(";
+            yield return new WaitForSeconds(1f);
             SceneManager.LoadScene(0);
         }
     }
@@ -221,9 +290,12 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        bool isDead = playerBreakThrough.TakeDamage(enemyBreakThrough.damage);
+         System.Random randomMove = new System.Random();
+        int randomNumber = randomMove.Next(0, 4); //random move 1-4
+
+        bool isDead = playerBreakThrough.TakeDamage(enemyBreakThrough.damage * enemyBreakThrough.moveIDs[randomNumber].power); //enemy attacks for random 1 of 4 moves
         playerInfoPanel.SetHP(playerBreakThrough, playerBreakThrough.currentHP);
-        dialogText.text = "You took " + enemyBreakThrough.damage/playerBreakThrough.resistance + " damage!"; 
+        dialogText.text = "You took " + enemyBreakThrough.damage* enemyBreakThrough.moveIDs[randomNumber].power/playerBreakThrough.resistance + " damage!"; 
 
         yield return new WaitForSeconds(1f);
 

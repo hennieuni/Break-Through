@@ -11,7 +11,7 @@ public class Breakthrough : MonoBehaviour
     public int resistance;
     public int damage;
     public int speed;
-    public string moveIDs;
+    public Move[] moveIDs = new Move[4];
     public string ability;
     public string spawnLocations;
     public string school;
