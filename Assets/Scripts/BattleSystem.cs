@@ -26,6 +26,8 @@ public class BattleSystem : MonoBehaviour
 
     public TMP_Text dialogText;
 
+    public TMP_Text moveText;
+
     public InfoPanel playerInfoPanel;
     public InfoPanel enemyInfoPanel;
 
@@ -35,6 +37,8 @@ public class BattleSystem : MonoBehaviour
 
     Breakthrough[] PlayerParty;
     Move[] moveList;
+    public GameObject attackOptions;
+    public GameObject battleOptions;
 
     public UnityEngine.TextAsset textAssetData;
     public UnityEngine.TextAsset playerPartyData;
@@ -73,8 +77,17 @@ public class BattleSystem : MonoBehaviour
             BreakthroughList[i].maxHP = int.Parse(stats[2]);         
             BreakthroughList[i].resistance = int.Parse(stats[3]);       
             BreakthroughList[i].damage = int.Parse(stats[4]);          
-            BreakthroughList[i].speed = int.Parse(stats[5]);         
-            BreakthroughList[i].moveIDs = stats[6];          
+            BreakthroughList[i].speed = int.Parse(stats[5]);
+
+            string[] knowMoves = stats[6].Split(new string[] {"-"}, StringSplitOptions.None);
+
+            BreakthroughList[i].moveIDs[0] = moveList[int.Parse(knowMoves[0])];
+            BreakthroughList[i].moveIDs[1] = moveList[int.Parse(knowMoves[1])];
+            BreakthroughList[i].moveIDs[2] = moveList[int.Parse(knowMoves[2])];
+            BreakthroughList[i].moveIDs[3] = moveList[int.Parse(knowMoves[3])];
+
+            Debug.Log("known move" + knowMoves[0]+knowMoves[1]+knowMoves[2]+ knowMoves[3]);
+
             BreakthroughList[i].ability = stats[7];          
             BreakthroughList[i].spawnLocations = stats[8];      
             BreakthroughList[i].school = stats[9];
@@ -135,6 +148,8 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
+    
+
     Breakthrough levelAdjusted(Breakthrough bt, int level){
 
         //(Level 100 stat / 4) + ( ¾ level 100 stat * level/100  )
@@ -159,6 +174,7 @@ public class BattleSystem : MonoBehaviour
     }
 
     IEnumerator SetupBattle(){
+        ReadMoves();
         ReadCSV();
         ReadPlayerBTCSV();
         
@@ -170,7 +186,7 @@ public class BattleSystem : MonoBehaviour
 
         
         System.Random random = new System.Random();
-        int randomNumber = random.Next(1, 5); 
+        int randomNumber = random.Next(1, 2); 
         //Debug.Log(randomNumber);
 
         GameObject enemyGO = Instantiate (enemyPrefab, enemyBattlestation);
@@ -179,12 +195,6 @@ public class BattleSystem : MonoBehaviour
         enemyBreakThrough = levelAdjusted(BreakthroughList[randomNumber], enemyLvl);
         enemyBreakThrough.currentHP =  BreakthroughList[randomNumber].maxHP;
         enemyBreakThrough.levelBT = enemyLvl;
-       
-        
-        
-        
-        
-
 
         dialogText.text = "You descovered the " + enemyBreakThrough.nameBT + "!";
 
@@ -205,20 +215,51 @@ public class BattleSystem : MonoBehaviour
 
     public void OnAttackBtn(){
         
-
         if (state != BattleState.PLAYERTURN){
             return;
         }
-        state = BattleState.Between;
-        StartCoroutine(PlayerAttack());
+        attackOptions.SetActive(true);
+        battleOptions.SetActive(false);
+        
+        //StartCoroutine(PlayerAttack());
     }
 
-    IEnumerator PlayerAttack(){
+    public void OnMove1Btn(){
+        state = BattleState.Between;
+        StartCoroutine(PlayerAttack(1));
+    }
+
+     public void OnMove2Btn(){
+        state = BattleState.Between;
+        StartCoroutine(PlayerAttack(2));
+    }
+
+     public void OnMove3Btn(){
+        state = BattleState.Between;
+        StartCoroutine(PlayerAttack(3));
+    }
+
+     public void OnMove4Btn(){
+        state = BattleState.Between;
+        StartCoroutine(PlayerAttack(4));
+    }
+
+
+
+
+    IEnumerator PlayerAttack(int moveNumber){
         
-        bool isDead = enemyBreakThrough.TakeDamage(playerBreakThrough.damage);
+        //Debug.Log("move used " + playerBreakThrough.moveIDs[moveNumber-1].nameM);
+        bool isDead = enemyBreakThrough.TakeDamage(playerBreakThrough.damage * playerBreakThrough.moveIDs[moveNumber-1].power);
         
         enemyInfoPanel.SetHP(enemyBreakThrough, enemyBreakThrough.currentHP);
-        dialogText.text = playerBreakThrough.nameBT + " dealt " + playerBreakThrough.damage/enemyBreakThrough.resistance + " damage.";
+        moveText.text = playerBreakThrough.nameBT + " used " + playerBreakThrough.moveIDs[moveNumber-1].nameM;
+        yield return new WaitForSeconds(1f);
+
+        attackOptions.SetActive(false);
+        battleOptions.SetActive(true);
+
+        dialogText.text = playerBreakThrough.nameBT + " dealt " + playerBreakThrough.damage*playerBreakThrough.moveIDs[moveNumber-1].power/enemyBreakThrough.resistance + " damage.";
 
         yield return new WaitForSeconds(2f);
 
@@ -235,9 +276,11 @@ public class BattleSystem : MonoBehaviour
     void EndBattle(){
         if (state == BattleState.WON){
             dialogText.text = "You defeated " + enemyBreakThrough.nameBT + "!";
+            yield return new WaitForSeconds(1f);
             SceneManager.LoadScene(1); 
         }else{
             dialogText.text = "You were defeated :(";
+            yield return new WaitForSeconds(1f);
             SceneManager.LoadScene(0);
         }
     }
@@ -247,9 +290,12 @@ public class BattleSystem : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        bool isDead = playerBreakThrough.TakeDamage(enemyBreakThrough.damage);
+         System.Random randomMove = new System.Random();
+        int randomNumber = randomMove.Next(0, 4); //random move 1-4
+
+        bool isDead = playerBreakThrough.TakeDamage(enemyBreakThrough.damage * enemyBreakThrough.moveIDs[randomNumber].power); //enemy attacks for random 1 of 4 moves
         playerInfoPanel.SetHP(playerBreakThrough, playerBreakThrough.currentHP);
-        dialogText.text = "You took " + enemyBreakThrough.damage/playerBreakThrough.resistance + " damage!"; 
+        dialogText.text = "You took " + enemyBreakThrough.damage* enemyBreakThrough.moveIDs[randomNumber].power/playerBreakThrough.resistance + " damage!"; 
 
         yield return new WaitForSeconds(1f);
 
