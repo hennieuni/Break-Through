@@ -1,0 +1,11 @@
+Move ID,Name ,Power,Type,Effect,Accuracy,Description
+1,Radiation,50,Physics,0,100,Energy radiates from its body
+2,Solar Flair,30,Astronomy,Burn,50,Causes burn effect if hits
+3,Fuse Core,0,Astronomy,Resistance up,100,"Increases density by fusing heavier elements, Defence raised 1 tier"
+4,Supernova,200,Astronomy,Kill User,100,"The user dies, releasing immence energy"
+5,Gravity Crush,0,Astronomy,level raw damage,100,The sheer mass of the user existing deals damage equal to its level
+6,Singularity,0,Astronomy,Resistance Damage Up,100,"All that pass the singularity feeds the black hole, Increasing resistance and damage"
+7,Regen,0,Biology,Heal Half,100,Regenerates HP by up to half of max HP
+8,Bio Slap,60,Biology,0,100,Slaps the opponent with all its might
+9,ATP Synthasis,0,Biology,Damage up,100,"Generates energy for cell functions, increasing damage stat"
+10,ATP Bullets,120,Biology,Damage Down,100,"Burns ATP to deal massive damage, lowering Damage stat"

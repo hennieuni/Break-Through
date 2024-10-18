@@ -34,9 +34,11 @@ public class BattleSystem : MonoBehaviour
     Breakthrough[] BreakthroughList;
 
     Breakthrough[] PlayerParty;
+    Move[] moveList;
 
     public UnityEngine.TextAsset textAssetData;
     public UnityEngine.TextAsset playerPartyData;
+    public UnityEngine.TextAsset movesData;
 
 
     void loadListBT(){
@@ -103,11 +105,34 @@ public class BattleSystem : MonoBehaviour
             PlayerParty[i] = levelAdjusted(BreakthroughList[int.Parse(stats[0])], int.Parse(stats[2]));
              
             PlayerParty[i].currentHP = int.Parse(stats[1]);
+            PlayerParty[i].levelBT = int.Parse(stats[2]);
              
             //add sprite location somehow her
 
         }
        
+    }
+
+    void ReadMoves(){
+        string[] moveString = movesData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
+
+        int leng = moveString.Length;
+
+        moveList = new Move[leng];
+
+        for (int i =1; i< leng-1; i++){
+            
+            string[] stats = moveString[i].Split(new string[] {","}, StringSplitOptions.None);
+
+            moveList[i] = new Move();
+
+            moveList[i].nameM = stats[1];
+            moveList[i].power =  int.Parse(stats[2]);
+            moveList[i].type = stats[3];
+            moveList[i].effect = stats[4];
+            moveList[i].accuracy =  int.Parse(stats[5]);
+            moveList[i].description = stats[6]; 
+        }
     }
 
     Breakthrough levelAdjusted(Breakthrough bt, int level){
@@ -123,7 +148,7 @@ public class BattleSystem : MonoBehaviour
         adjustedBT.speed = adjustToLevel(bt.resistance, level);
         
 
-        Debug.Log("resistance " +adjustedBT.resistance);
+        //Debug.Log("resistance " +adjustedBT.resistance);
         return adjustedBT;
     }
 
@@ -140,16 +165,17 @@ public class BattleSystem : MonoBehaviour
         GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
         //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
         playerBreakThrough = PlayerParty[1];
+        
 
 
         
         System.Random random = new System.Random();
-        int randomNumber = random.Next(1, 2); 
+        int randomNumber = random.Next(1, 5); 
         //Debug.Log(randomNumber);
 
         GameObject enemyGO = Instantiate (enemyPrefab, enemyBattlestation);
 
-        int enemyLvl = 1;
+        int enemyLvl = playerBreakThrough.levelBT;
         enemyBreakThrough = levelAdjusted(BreakthroughList[randomNumber], enemyLvl);
         enemyBreakThrough.currentHP =  BreakthroughList[randomNumber].maxHP;
         enemyBreakThrough.levelBT = enemyLvl;
