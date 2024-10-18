@@ -273,7 +273,7 @@ public class BattleSystem : MonoBehaviour
 
     }
 
-    void EndBattle(){
+    IEnumerator EndBattle(){
         if (state == BattleState.WON){
             dialogText.text = "You defeated " + enemyBreakThrough.nameBT + "!";
             yield return new WaitForSeconds(1f);
