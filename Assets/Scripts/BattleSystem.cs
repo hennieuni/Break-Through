@@ -121,13 +121,14 @@ public class BattleSystem : MonoBehaviour
         adjustedBT.resistance = adjustToLevel(bt.resistance, level);
         adjustedBT.damage = adjustToLevel(bt.damage, level);
         adjustedBT.speed = adjustToLevel(bt.resistance, level);
-        adjustedBT.resistance = adjustToLevel(bt.resistance, level);
+        
 
+        Debug.Log("resistance " +adjustedBT.resistance);
         return adjustedBT;
     }
 
     int adjustToLevel(int val, int level){
-        float corrected = (val/4)+(3/4*val*(level/100));
+        float corrected = (val/4f)+(3f/4f*val*(level/100f));
         //Debug.Log((int)Math.Floor(corrected));
         return (int)Math.Floor(corrected);
     }
@@ -139,8 +140,6 @@ public class BattleSystem : MonoBehaviour
         GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
         //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
         playerBreakThrough = PlayerParty[1];
-        
-         Debug.Log("here");
 
 
         
@@ -154,6 +153,7 @@ public class BattleSystem : MonoBehaviour
         enemyBreakThrough = levelAdjusted(BreakthroughList[randomNumber], enemyLvl);
         enemyBreakThrough.currentHP =  BreakthroughList[randomNumber].maxHP;
         enemyBreakThrough.levelBT = enemyLvl;
+       
         
         
         
@@ -192,7 +192,7 @@ public class BattleSystem : MonoBehaviour
         bool isDead = enemyBreakThrough.TakeDamage(playerBreakThrough.damage);
         
         enemyInfoPanel.SetHP(enemyBreakThrough, enemyBreakThrough.currentHP);
-        dialogText.text = playerBreakThrough.nameBT + " dealt " + playerBreakThrough.damage + " damage.";
+        dialogText.text = playerBreakThrough.nameBT + " dealt " + playerBreakThrough.damage/enemyBreakThrough.resistance + " damage.";
 
         yield return new WaitForSeconds(2f);
 
@@ -223,7 +223,7 @@ public class BattleSystem : MonoBehaviour
 
         bool isDead = playerBreakThrough.TakeDamage(enemyBreakThrough.damage);
         playerInfoPanel.SetHP(playerBreakThrough, playerBreakThrough.currentHP);
-        dialogText.text = "You took " + enemyBreakThrough.damage + " damage!"; 
+        dialogText.text = "You took " + enemyBreakThrough.damage/playerBreakThrough.resistance + " damage!"; 
 
         yield return new WaitForSeconds(1f);
 

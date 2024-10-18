@@ -20,7 +20,8 @@ public class Breakthrough : MonoBehaviour
     public string spriteLocation;
 
     public bool TakeDamage(int dmg){
-        currentHP-= dmg;
+         
+        currentHP-= dmg/resistance;
 
         if (currentHP <=0){
             return true;
