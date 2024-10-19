@@ -19,7 +19,7 @@ public class BattleSystem : MonoBehaviour
     public GameObject playerPrefab;
     public GameObject enemyPrefab;
 
-    int selectedBT=1;
+    
 
     public Transform playerBattlestation;
     public Transform enemyBattlestation;
@@ -197,7 +197,7 @@ public class BattleSystem : MonoBehaviour
         
         GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
         //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
-        playerBreakThrough = PlayerParty[selectedBT];
+        playerBreakThrough = PlayerParty[1];
 
         System.Random random = new System.Random();
         enemyID = random.Next(1, 2); 
@@ -315,14 +315,18 @@ public class BattleSystem : MonoBehaviour
     public void OnOption4Btn(){
         StartCoroutine(checkOption(4));
     }
+    
+    
     public void OnBT1Select(){
-        playerBreakThrough = PlayerParty[1]; 
+        playerBreakThrough = PlayerParty[1];
+        playerInfoPanel.SetHud(playerBreakThrough); 
         battleOptions.SetActive(true);
         swapOptions.SetActive(false);
     }
     public void OnBT2Select(){
         if (totalPartySize >= 2){
             playerBreakThrough = PlayerParty[2]; 
+            playerInfoPanel.SetHud(playerBreakThrough);
             battleOptions.SetActive(true);
             swapOptions.SetActive(false);
         }else{
@@ -333,7 +337,8 @@ public class BattleSystem : MonoBehaviour
 
     public void OnBT3Select(){
         if(totalPartySize >= 3){
-            playerBreakThrough = PlayerParty[3]; 
+            playerBreakThrough = PlayerParty[3];
+            playerInfoPanel.SetHud(playerBreakThrough); 
             battleOptions.SetActive(true);
             swapOptions.SetActive(false);
         }else{
@@ -344,7 +349,8 @@ public class BattleSystem : MonoBehaviour
 
     public void OnBT4Select(){
         if(totalPartySize >= 4){
-            playerBreakThrough = PlayerParty[4]; 
+            playerBreakThrough = PlayerParty[4];
+            playerInfoPanel.SetHud(playerBreakThrough); 
             battleOptions.SetActive(true);
             swapOptions.SetActive(false);
         }else{
@@ -355,7 +361,8 @@ public class BattleSystem : MonoBehaviour
 
     public void OnBT5Select(){
         if(totalPartySize >= 5){
-            playerBreakThrough = PlayerParty[5]; 
+            playerBreakThrough = PlayerParty[5];
+            playerInfoPanel.SetHud(playerBreakThrough); 
             battleOptions.SetActive(true);
             swapOptions.SetActive(false);
         }else{
@@ -365,8 +372,8 @@ public class BattleSystem : MonoBehaviour
     }
     public void OnBT6Select(){
         if(totalPartySize >= 6){
-            selectedBT = 6;
-            playerBreakThrough = PlayerParty[6]; 
+            playerBreakThrough = PlayerParty[6];
+            playerInfoPanel.SetHud(playerBreakThrough); 
             battleOptions.SetActive(true);
             swapOptions.SetActive(false);
         }else{
