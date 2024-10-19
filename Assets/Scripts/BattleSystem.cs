@@ -318,17 +318,27 @@ public class BattleSystem : MonoBehaviour
     
     
     public void OnBT1Select(){
-        playerBreakThrough = PlayerParty[1];
-        playerInfoPanel.SetHud(playerBreakThrough); 
-        battleOptions.SetActive(true);
-        swapOptions.SetActive(false);
+        if (PlayerParty[1].currentHP > 0){
+            playerBreakThrough = PlayerParty[1];
+            playerInfoPanel.SetHud(playerBreakThrough); 
+            battleOptions.SetActive(true);
+            swapOptions.SetActive(false);     
+        }else{
+            btSelectText.text = "That BreakThrough is out of HP";  
+        }
+        
     }
     public void OnBT2Select(){
         if (totalPartySize >= 2){
-            playerBreakThrough = PlayerParty[2]; 
-            playerInfoPanel.SetHud(playerBreakThrough);
-            battleOptions.SetActive(true);
-            swapOptions.SetActive(false);
+            if (PlayerParty[2].currentHP > 0){
+                playerBreakThrough = PlayerParty[2]; 
+                playerInfoPanel.SetHud(playerBreakThrough);
+                battleOptions.SetActive(true);
+                swapOptions.SetActive(false);
+            }else{
+              btSelectText.text = "That BreakThrough is out of HP";  
+            }
+          
         }else{
             btSelectText.text = "Dont have that many please pick a lower one";
         }
@@ -337,10 +347,15 @@ public class BattleSystem : MonoBehaviour
 
     public void OnBT3Select(){
         if(totalPartySize >= 3){
-            playerBreakThrough = PlayerParty[3];
-            playerInfoPanel.SetHud(playerBreakThrough); 
-            battleOptions.SetActive(true);
-            swapOptions.SetActive(false);
+            if (PlayerParty[3].currentHP > 0){
+                playerBreakThrough = PlayerParty[3];
+                playerInfoPanel.SetHud(playerBreakThrough); 
+                battleOptions.SetActive(true);
+                swapOptions.SetActive(false);
+            }else{
+              btSelectText.text = "That BreakThrough is out of HP";  
+            }
+            
         }else{
             btSelectText.text = "Dont have that many please pick a lower one";
         }
@@ -349,10 +364,15 @@ public class BattleSystem : MonoBehaviour
 
     public void OnBT4Select(){
         if(totalPartySize >= 4){
-            playerBreakThrough = PlayerParty[4];
-            playerInfoPanel.SetHud(playerBreakThrough); 
-            battleOptions.SetActive(true);
-            swapOptions.SetActive(false);
+            if (PlayerParty[4].currentHP > 0){
+                playerBreakThrough = PlayerParty[4];
+                playerInfoPanel.SetHud(playerBreakThrough); 
+                battleOptions.SetActive(true);
+                swapOptions.SetActive(false);  
+            }else{
+              btSelectText.text = "That BreakThrough is out of HP";  
+            }
+            
         }else{
             btSelectText.text = "Dont have that many please pick a lower one";
         }
@@ -361,10 +381,15 @@ public class BattleSystem : MonoBehaviour
 
     public void OnBT5Select(){
         if(totalPartySize >= 5){
-            playerBreakThrough = PlayerParty[5];
-            playerInfoPanel.SetHud(playerBreakThrough); 
-            battleOptions.SetActive(true);
-            swapOptions.SetActive(false);
+            if (PlayerParty[5].currentHP > 0){
+                playerBreakThrough = PlayerParty[5];
+                playerInfoPanel.SetHud(playerBreakThrough); 
+                battleOptions.SetActive(true);
+                swapOptions.SetActive(false);
+            }else{
+              btSelectText.text = "That BreakThrough is out of HP";  
+            }
+            
         }else{
             btSelectText.text = "Dont have that many please pick a lower one";
         }
@@ -372,10 +397,15 @@ public class BattleSystem : MonoBehaviour
     }
     public void OnBT6Select(){
         if(totalPartySize >= 6){
-            playerBreakThrough = PlayerParty[6];
-            playerInfoPanel.SetHud(playerBreakThrough); 
-            battleOptions.SetActive(true);
-            swapOptions.SetActive(false);
+            if (PlayerParty[6].currentHP > 0){
+                playerBreakThrough = PlayerParty[6];
+                playerInfoPanel.SetHud(playerBreakThrough); 
+                battleOptions.SetActive(true);
+                swapOptions.SetActive(false);
+            }else{
+              btSelectText.text = "That BreakThrough is out of HP";  
+            }
+            
         }else{
             btSelectText.text = "Dont have that many please pick a lower one";
         }
