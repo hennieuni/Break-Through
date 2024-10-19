@@ -248,21 +248,33 @@ public class BattleSystem : MonoBehaviour
     }
 
     public void OnMove1Btn(){
+        if (state != BattleState.PLAYERTURN){
+            return;
+        }
         state = BattleState.Between;
         StartCoroutine(PlayerAttack(1));
     }
 
     public void OnMove2Btn(){
+        if (state != BattleState.PLAYERTURN){
+            return;
+        }
         state = BattleState.Between;
         StartCoroutine(PlayerAttack(2));
     }
 
     public void OnMove3Btn(){
+        if (state != BattleState.PLAYERTURN){
+            return;
+        }
         state = BattleState.Between;
         StartCoroutine(PlayerAttack(3));
     }
 
     public void OnMove4Btn(){
+        if (state != BattleState.PLAYERTURN){
+            return;
+        }
         state = BattleState.Between;
         StartCoroutine(PlayerAttack(4));
     }
@@ -309,6 +321,7 @@ public class BattleSystem : MonoBehaviour
 
 
     IEnumerator PlayerAttack(int moveNumber){
+        
         //Debug.Log("move used " + playerBreakThrough.moveIDs[moveNumber-1].nameM);
         bool isDead = enemyBreakThrough.TakeDamage(playerBreakThrough.damage * playerBreakThrough.moveIDs[moveNumber-1].power);
         
