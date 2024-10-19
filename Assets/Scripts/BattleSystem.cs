@@ -27,6 +27,7 @@ public class BattleSystem : MonoBehaviour
     public TMP_Text dialogText;
 
     public TMP_Text moveText;
+    public TMP_Text questionText;
 
     public InfoPanel playerInfoPanel;
     public InfoPanel enemyInfoPanel;
@@ -39,10 +40,17 @@ public class BattleSystem : MonoBehaviour
     Move[] moveList;
     public GameObject attackOptions;
     public GameObject battleOptions;
+    public GameObject questionOptions;
+
+    public TMP_Text move1BtnT, move2BtnT, move3BtnT, move4BtnT;
+    public TMP_Text option1BtnT, option2BtnT, option3BtnT, option4BtnT;
 
     public UnityEngine.TextAsset textAssetData;
     public UnityEngine.TextAsset playerPartyData;
     public UnityEngine.TextAsset movesData;
+    int enemyID ;
+
+    string playerBTfile;
 
 
     void loadListBT(){
@@ -51,7 +59,8 @@ public class BattleSystem : MonoBehaviour
 
     void Start()
     {
-        
+        playerBTfile = Application.dataPath + "/CSV/PlayerBT.csv";
+
         canSpawnFile = Application.dataPath + "/Saves/CanSpawn.txt";
 
         state = BattleState.START; 
@@ -68,35 +77,42 @@ public class BattleSystem : MonoBehaviour
        
 
         for (int i =1; i< leng-1; i++){
-            
+             
             string[] stats = btString[i].Split(new string[] {","}, StringSplitOptions.None);
 
             BreakthroughList[i] = new Breakthrough();
 
+            BreakthroughList[i].btID = int.Parse(stats[0]);
+            
             BreakthroughList[i].nameBT = stats[1];      
             BreakthroughList[i].maxHP = int.Parse(stats[2]);         
             BreakthroughList[i].resistance = int.Parse(stats[3]);       
             BreakthroughList[i].damage = int.Parse(stats[4]);          
             BreakthroughList[i].speed = int.Parse(stats[5]);
-
+            
             string[] knowMoves = stats[6].Split(new string[] {"-"}, StringSplitOptions.None);
-
             BreakthroughList[i].moveIDs[0] = moveList[int.Parse(knowMoves[0])];
             BreakthroughList[i].moveIDs[1] = moveList[int.Parse(knowMoves[1])];
             BreakthroughList[i].moveIDs[2] = moveList[int.Parse(knowMoves[2])];
             BreakthroughList[i].moveIDs[3] = moveList[int.Parse(knowMoves[3])];
-
-            Debug.Log("known move" + knowMoves[0]+knowMoves[1]+knowMoves[2]+ knowMoves[3]);
-
+            
             BreakthroughList[i].ability = stats[7];          
             BreakthroughList[i].spawnLocations = stats[8];      
             BreakthroughList[i].school = stats[9];
             BreakthroughList[i].evolveLvl = int.Parse(stats[10]);
             BreakthroughList[i].discription = stats[11];
             
-            //add sprite location somehow her
-
-        }     
+            BreakthroughList[i].question = stats[12];
+            BreakthroughList[i].option1 = stats[13];
+            BreakthroughList[i].option2 = stats[14];
+            BreakthroughList[i].option3 = stats[15];
+            BreakthroughList[i].option4 = stats[16];
+            //Debug.Log("here " +stats[17]); 
+            BreakthroughList[i].correctOption = int.Parse(stats[17]);
+            
+            //add sprite location somehow here
+        }  
+          
     }
 
     void ReadPlayerBTCSV(){
@@ -174,6 +190,8 @@ public class BattleSystem : MonoBehaviour
     }
 
     IEnumerator SetupBattle(){
+       
+
         ReadMoves();
         ReadCSV();
         ReadPlayerBTCSV();
@@ -186,14 +204,14 @@ public class BattleSystem : MonoBehaviour
 
         
         System.Random random = new System.Random();
-        int randomNumber = random.Next(1, 2); 
+        enemyID = random.Next(1, 2); 
         //Debug.Log(randomNumber);
 
         GameObject enemyGO = Instantiate (enemyPrefab, enemyBattlestation);
 
         int enemyLvl = playerBreakThrough.levelBT;
-        enemyBreakThrough = levelAdjusted(BreakthroughList[randomNumber], enemyLvl);
-        enemyBreakThrough.currentHP =  BreakthroughList[randomNumber].maxHP;
+        enemyBreakThrough = levelAdjusted(BreakthroughList[enemyID], enemyLvl);
+        enemyBreakThrough.currentHP =  BreakthroughList[enemyID].maxHP;
         enemyBreakThrough.levelBT = enemyLvl;
 
         dialogText.text = "You descovered the " + enemyBreakThrough.nameBT + "!";
@@ -220,6 +238,11 @@ public class BattleSystem : MonoBehaviour
         }
         attackOptions.SetActive(true);
         battleOptions.SetActive(false);
+
+        move1BtnT.text = playerBreakThrough.moveIDs[0].nameM;
+        move2BtnT.text = playerBreakThrough.moveIDs[1].nameM;
+        move3BtnT.text = playerBreakThrough.moveIDs[2].nameM;
+        move4BtnT.text = playerBreakThrough.moveIDs[3].nameM;
         
         //StartCoroutine(PlayerAttack());
     }
@@ -229,26 +252,57 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(PlayerAttack(1));
     }
 
-     public void OnMove2Btn(){
+    public void OnMove2Btn(){
         state = BattleState.Between;
         StartCoroutine(PlayerAttack(2));
     }
 
-     public void OnMove3Btn(){
+    public void OnMove3Btn(){
         state = BattleState.Between;
         StartCoroutine(PlayerAttack(3));
     }
 
-     public void OnMove4Btn(){
+    public void OnMove4Btn(){
         state = BattleState.Between;
         StartCoroutine(PlayerAttack(4));
     }
 
+    public void OnOption1Btn(){
+        StartCoroutine(checkOption(1));
+    }
+    public void OnOption2Btn(){
+        StartCoroutine(checkOption(2));
+    }
+    public void OnOption3Btn(){
+        StartCoroutine(checkOption(3));
+    }
+    public void OnOption4Btn(){
+        StartCoroutine(checkOption(4));
+    }
 
+    IEnumerator checkOption(int option){
+        
+        //update current HP after battle
+        File.WriteAllText(playerBTfile, string.Empty);  //clears file
+        Debug.Log("here");
+        using (StreamWriter writer = new StreamWriter(playerBTfile,true)){
+            foreach (Breakthrough p in PlayerParty){  //writes from data
+                writer.WriteLine(p.btID + "," +p.currentHP + "," + p.levelBT+",0" );
+            }
+
+            if (enemyBreakThrough.correctOption == option){
+                writer.WriteLine(""+enemyID + ",0," + enemyBreakThrough.levelBT+",5");
+                questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
+            }else{
+                questionText.text = "Inorrect :( "+ enemyBreakThrough.nameBT + " got away";
+            }
+        }
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene(1); 
+    }
 
 
     IEnumerator PlayerAttack(int moveNumber){
-        
         //Debug.Log("move used " + playerBreakThrough.moveIDs[moveNumber-1].nameM);
         bool isDead = enemyBreakThrough.TakeDamage(playerBreakThrough.damage * playerBreakThrough.moveIDs[moveNumber-1].power);
         
@@ -258,26 +312,39 @@ public class BattleSystem : MonoBehaviour
 
         attackOptions.SetActive(false);
         battleOptions.SetActive(true);
-
+        
         dialogText.text = playerBreakThrough.nameBT + " dealt " + playerBreakThrough.damage*playerBreakThrough.moveIDs[moveNumber-1].power/enemyBreakThrough.resistance + " damage.";
-
-        yield return new WaitForSeconds(2f);
-
+        
+        yield return new WaitForSeconds(1f);
+        
         if (isDead){
-           state = BattleState.WON; 
-           EndBattle();
+           state = BattleState.WON;
+           StartCoroutine(EndBattle());
         }else{
             state = BattleState.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }
-
+        
+        
+        
     }
 
     IEnumerator EndBattle(){
+         
         if (state == BattleState.WON){
             dialogText.text = "You defeated " + enemyBreakThrough.nameBT + "!";
             yield return new WaitForSeconds(1f);
-            SceneManager.LoadScene(1); 
+            battleOptions.SetActive(false);
+            questionOptions.SetActive(true);
+
+            questionText.text = enemyBreakThrough.question;
+            option1BtnT.text = enemyBreakThrough.option1;
+            option2BtnT.text = enemyBreakThrough.option2;
+            option3BtnT.text = enemyBreakThrough.option3;
+            option4BtnT.text = enemyBreakThrough.option4;
+
+
+            //SceneManager.LoadScene(1); 
         }else{
             dialogText.text = "You were defeated :(";
             yield return new WaitForSeconds(1f);
@@ -301,7 +368,7 @@ public class BattleSystem : MonoBehaviour
 
         if (isDead){
             state = BattleState.LOST; 
-            EndBattle();
+            StartCoroutine(EndBattle());
         }else{
             state = BattleState.PLAYERTURN;
             PlayerTurn();

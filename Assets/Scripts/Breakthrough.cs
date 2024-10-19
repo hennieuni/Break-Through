@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Breakthrough : MonoBehaviour
 {
+    public int btID;
     public string nameBT;
     public int levelBT;
     public int currentHP;
@@ -18,6 +19,10 @@ public class Breakthrough : MonoBehaviour
     public int evolveLvl;
     public string discription;
     public string spriteLocation;
+    public string question;
+    public string option1, option2, option3, option4;
+    public int correctOption;
+   
 
     public bool TakeDamage(int dmg){
          
