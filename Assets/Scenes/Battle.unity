@@ -4273,7 +4273,6 @@ MonoBehaviour:
   option3BtnT: {fileID: 1508174467}
   option4BtnT: {fileID: 2140129355}
   textAssetData: {fileID: 4900000, guid: f2de3b7e3520f1949ad50a6757498ae5, type: 3}
-  playerPartyData: {fileID: 4900000, guid: d39caa8ba5bd5764da4a3a4cf9439b38, type: 3}
   movesData: {fileID: 4900000, guid: 254ee517e9a9f564daea380de720bc9e, type: 3}
 --- !u!4 &1381233145
 Transform:

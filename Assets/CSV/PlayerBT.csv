@@ -1,2 +1,4 @@
-id,currentHP,level,EXP to next level
+ID,currentHP,levelBT,expNextLevel
 2,10,1,0
+1,0,1,0
+1,0,1,5

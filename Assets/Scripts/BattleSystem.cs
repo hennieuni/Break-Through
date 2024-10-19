@@ -46,7 +46,7 @@ public class BattleSystem : MonoBehaviour
     public TMP_Text option1BtnT, option2BtnT, option3BtnT, option4BtnT;
 
     public UnityEngine.TextAsset textAssetData;
-    public UnityEngine.TextAsset playerPartyData;
+    //public UnityEngine.TextAsset playerPartyData;
     public UnityEngine.TextAsset movesData;
     int enemyID ;
 
@@ -71,22 +71,24 @@ public class BattleSystem : MonoBehaviour
 
     void ReadCSV(){
         string[] btString = textAssetData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
-
+        
         int leng = btString.Length;
-
+        
         BreakthroughList = new Breakthrough[leng];
        
-
+       
         for (int i =1; i< leng-1; i++){
              
             string[] stats = btString[i].Split(new string[] {","}, StringSplitOptions.None);
 
+            
+            
             BreakthroughList[i] = new Breakthrough();
 
             BreakthroughList[i].btID = int.Parse(stats[0]);
             
-            BreakthroughList[i].nameBT = stats[1];    
-            BreakthroughList[i].maxHP = int.Parse(stats[2]);         
+            BreakthroughList[i].nameBT = stats[1];  
+            BreakthroughList[i].maxHP = int.Parse(stats[2]);        
             BreakthroughList[i].resistance = int.Parse(stats[3]);       
             BreakthroughList[i].damage = int.Parse(stats[4]);          
             BreakthroughList[i].speed = int.Parse(stats[5]);
@@ -118,20 +120,18 @@ public class BattleSystem : MonoBehaviour
 
     void ReadPlayerBTCSV(){
         
-        //string[] btString = File.ReadAllLines(playerBTfile);
-        string[] btString = playerPartyData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
+        string[] btString = File.ReadAllLines(playerBTfile);
+        //string[] btString = playerPartyData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
         int leng = btString.Length;
-
+        
         PlayerParty = new Breakthrough[leng];
 
-        for (int i =1; i< leng-1; i++){
-           
+        for (int i =1; i< leng; i++){
             string[] stats = btString[i].Split(new string[] {","}, StringSplitOptions.None);
              
             PlayerParty[i] = new Breakthrough();
              
             PlayerParty[i] = levelAdjusted(BreakthroughList[int.Parse(stats[0])], int.Parse(stats[2]));
-             
             PlayerParty[i].currentHP = int.Parse(stats[1]);
             PlayerParty[i].levelBT = int.Parse(stats[2]);
              
@@ -169,9 +169,8 @@ public class BattleSystem : MonoBehaviour
 
         //(Level 100 stat / 4) + ( ¾ level 100 stat * level/100  )
 
-        Breakthrough adjustedBT = new Breakthrough();
-
-        adjustedBT = bt;
+        Breakthrough adjustedBT = new Breakthrough(bt);
+        Debug.Log(bt.maxHP);
         adjustedBT.maxHP = adjustToLevel(bt.maxHP, level);
         adjustedBT.resistance = adjustToLevel(bt.resistance, level);
         adjustedBT.damage = adjustToLevel(bt.damage, level);
@@ -197,7 +196,7 @@ public class BattleSystem : MonoBehaviour
         
         GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
         //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
-        playerBreakThrough = PlayerParty[1];
+        playerBreakThrough = PlayerParty[2];
         
 
 
@@ -209,8 +208,10 @@ public class BattleSystem : MonoBehaviour
         GameObject enemyGO = Instantiate (enemyPrefab, enemyBattlestation);
 
         int enemyLvl = playerBreakThrough.levelBT;
+        //Debug.Log(BreakthroughList[enemyID].maxHP);
         enemyBreakThrough = levelAdjusted(BreakthroughList[enemyID], enemyLvl);
-        enemyBreakThrough.currentHP =  BreakthroughList[enemyID].maxHP;
+        enemyBreakThrough.currentHP =  enemyBreakThrough.maxHP;
+        //Debug.Log( BreakthroughList[enemyID].maxHP);
         enemyBreakThrough.levelBT = enemyLvl;
 
         dialogText.text = "You descovered the " + enemyBreakThrough.nameBT + "!";
@@ -281,20 +282,23 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator checkOption(int option){
 
-        Debug.Log("checkoption "+option);
+        
         //update current HP after battle
-        //File.WriteAllText(playerBTfile, string.Empty);  //clears file
+        File.WriteAllText(playerBTfile, string.Empty);  //clears file
         
         using (StreamWriter writer = new StreamWriter(playerBTfile,true)){
-            foreach (Breakthrough p in PlayerParty){  //writes from data
-                writer.WriteLine(p.btID + "," +p.currentHP + "," + p.levelBT+",0" );
+            
+            
+            writer.WriteLine("ID,currentHP,levelBT,expNextLevel");
+            for(int i=1;i<PlayerParty.Length; i++ ){  //writes from data
+                writer.WriteLine(PlayerParty[i].btID + "," +PlayerParty[i].currentHP + "," + PlayerParty[i].levelBT+",0" );
             }
             
             if (enemyBreakThrough.correctOption == option){
                 
                 writer.WriteLine(""+enemyID + ",0," + enemyBreakThrough.levelBT+",5");
                 questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
-                Debug.Log("checkoption "+option);
+                
             }else{
                 questionText.text = "Inorrect :( "+ enemyBreakThrough.nameBT + " got away";
             }
