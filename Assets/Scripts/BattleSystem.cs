@@ -15,9 +15,11 @@ public enum BattleState {START, PLAYERTURN, ENEMYTURN, WON, LOST, Between }
 
 public class BattleSystem : MonoBehaviour
 {
-    public BattleState state;
+    BattleState state;
     public GameObject playerPrefab;
     public GameObject enemyPrefab;
+
+    int selectedBT=1;
 
     public Transform playerBattlestation;
     public Transform enemyBattlestation;
@@ -25,9 +27,9 @@ public class BattleSystem : MonoBehaviour
     Breakthrough enemyBreakThrough;
 
     public TMP_Text dialogText;
-
     public TMP_Text moveText;
     public TMP_Text questionText;
+    public TMP_Text btSelectText;
 
     public InfoPanel playerInfoPanel;
     public InfoPanel enemyInfoPanel;
@@ -40,10 +42,12 @@ public class BattleSystem : MonoBehaviour
     Move[] moveList;
     public GameObject attackOptions;
     public GameObject battleOptions;
+    public GameObject swapOptions;
     public GameObject questionOptions;
 
     public TMP_Text move1BtnT, move2BtnT, move3BtnT, move4BtnT;
     public TMP_Text option1BtnT, option2BtnT, option3BtnT, option4BtnT;
+    public TMP_Text bt1, bt2, bt3, bt4, bt5, bt6;
 
     public UnityEngine.TextAsset textAssetData;
     //public UnityEngine.TextAsset playerPartyData;
@@ -52,10 +56,7 @@ public class BattleSystem : MonoBehaviour
 
     string playerBTfile;
 
-
-    void loadListBT(){
-       string[] data =  textAssetData.text.Split(new string[]{","}, StringSplitOptions.None);
-    }
+    int totalPartySize;
 
     void Start()
     {
@@ -125,7 +126,8 @@ public class BattleSystem : MonoBehaviour
         int leng = btString.Length;
         
         PlayerParty = new Breakthrough[leng];
-
+        totalPartySize = leng-1;
+        //Debug.Log(totalPartySize);
         for (int i =1; i< leng; i++){
             string[] stats = btString[i].Split(new string[] {","}, StringSplitOptions.None);
              
@@ -170,7 +172,7 @@ public class BattleSystem : MonoBehaviour
         //(Level 100 stat / 4) + ( ¾ level 100 stat * level/100  )
 
         Breakthrough adjustedBT = new Breakthrough(bt);
-        Debug.Log(bt.maxHP);
+        //Debug.Log(bt.maxHP);
         adjustedBT.maxHP = adjustToLevel(bt.maxHP, level);
         adjustedBT.resistance = adjustToLevel(bt.resistance, level);
         adjustedBT.damage = adjustToLevel(bt.damage, level);
@@ -188,7 +190,6 @@ public class BattleSystem : MonoBehaviour
     }
 
     IEnumerator SetupBattle(){
-       
 
         ReadMoves();
         ReadCSV();
@@ -196,11 +197,8 @@ public class BattleSystem : MonoBehaviour
         
         GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
         //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
-        playerBreakThrough = PlayerParty[2];
-        
+        playerBreakThrough = PlayerParty[selectedBT];
 
-
-        
         System.Random random = new System.Random();
         enemyID = random.Next(1, 2); 
         //Debug.Log(randomNumber);
@@ -246,7 +244,33 @@ public class BattleSystem : MonoBehaviour
         
         //StartCoroutine(PlayerAttack());
     }
+    public void OnSwapBtn(){
+        if (state != BattleState.PLAYERTURN){
+            return;
+        }
 
+        battleOptions.SetActive(false);
+        swapOptions.SetActive(true);
+        
+        bt1.text = PlayerParty[1].nameBT;
+        
+        if (totalPartySize >=2){
+            bt2.text = PlayerParty[2].nameBT;
+        }
+        if (totalPartySize >=3){
+            bt3.text = PlayerParty[3].nameBT;
+        }
+        if (totalPartySize >=4){
+           bt4.text = PlayerParty[4].nameBT; 
+        }
+        if (totalPartySize >=5){
+           bt5.text = PlayerParty[5].nameBT;  
+        }
+        if (totalPartySize >=6){
+           bt6.text = PlayerParty[6].nameBT; 
+        }  
+        
+    }
     public void OnMove1Btn(){
         if (state != BattleState.PLAYERTURN){
             return;
@@ -291,7 +315,66 @@ public class BattleSystem : MonoBehaviour
     public void OnOption4Btn(){
         StartCoroutine(checkOption(4));
     }
+    public void OnBT1Select(){
+        playerBreakThrough = PlayerParty[1]; 
+        battleOptions.SetActive(true);
+        swapOptions.SetActive(false);
+    }
+    public void OnBT2Select(){
+        if (totalPartySize >= 2){
+            playerBreakThrough = PlayerParty[2]; 
+            battleOptions.SetActive(true);
+            swapOptions.SetActive(false);
+        }else{
+            btSelectText.text = "Dont have that many please pick a lower one";
+        }
+       
+    }
 
+    public void OnBT3Select(){
+        if(totalPartySize >= 3){
+            playerBreakThrough = PlayerParty[3]; 
+            battleOptions.SetActive(true);
+            swapOptions.SetActive(false);
+        }else{
+            btSelectText.text = "Dont have that many please pick a lower one";
+        }
+        
+    }
+
+    public void OnBT4Select(){
+        if(totalPartySize >= 4){
+            playerBreakThrough = PlayerParty[4]; 
+            battleOptions.SetActive(true);
+            swapOptions.SetActive(false);
+        }else{
+            btSelectText.text = "Dont have that many please pick a lower one";
+        }
+       
+    }
+
+    public void OnBT5Select(){
+        if(totalPartySize >= 5){
+            playerBreakThrough = PlayerParty[5]; 
+            battleOptions.SetActive(true);
+            swapOptions.SetActive(false);
+        }else{
+            btSelectText.text = "Dont have that many please pick a lower one";
+        }
+        
+    }
+    public void OnBT6Select(){
+        if(totalPartySize >= 6){
+            selectedBT = 6;
+            playerBreakThrough = PlayerParty[6]; 
+            battleOptions.SetActive(true);
+            swapOptions.SetActive(false);
+        }else{
+            btSelectText.text = "Dont have that many please pick a lower one";
+        }
+        
+    }
+    
     IEnumerator checkOption(int option){
 
         
@@ -343,8 +426,6 @@ public class BattleSystem : MonoBehaviour
             state = BattleState.ENEMYTURN;
             StartCoroutine(EnemyTurn());
         }
-        
-        
         
     }
 
