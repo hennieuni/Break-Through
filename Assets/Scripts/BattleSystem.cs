@@ -32,7 +32,7 @@ public class BattleSystem : MonoBehaviour
     public InfoPanel playerInfoPanel;
     public InfoPanel enemyInfoPanel;
 
-    string canSpawnFile;
+    //string canSpawnFile;
 
     Breakthrough[] BreakthroughList;
 
@@ -61,7 +61,8 @@ public class BattleSystem : MonoBehaviour
     {
         playerBTfile = Application.dataPath + "/CSV/PlayerBT.csv";
 
-        canSpawnFile = Application.dataPath + "/Saves/CanSpawn.txt";
+
+        //canSpawnFile = Application.dataPath + "/Saves/CanSpawn.txt";
 
         state = BattleState.START; 
         StartCoroutine(SetupBattle());
@@ -84,7 +85,7 @@ public class BattleSystem : MonoBehaviour
 
             BreakthroughList[i].btID = int.Parse(stats[0]);
             
-            BreakthroughList[i].nameBT = stats[1];      
+            BreakthroughList[i].nameBT = stats[1];    
             BreakthroughList[i].maxHP = int.Parse(stats[2]);         
             BreakthroughList[i].resistance = int.Parse(stats[3]);       
             BreakthroughList[i].damage = int.Parse(stats[4]);          
@@ -116,17 +117,15 @@ public class BattleSystem : MonoBehaviour
     }
 
     void ReadPlayerBTCSV(){
+        
+        //string[] btString = File.ReadAllLines(playerBTfile);
         string[] btString = playerPartyData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
-
         int leng = btString.Length;
 
         PlayerParty = new Breakthrough[leng];
 
-        
-
         for (int i =1; i< leng-1; i++){
            
-            
             string[] stats = btString[i].Split(new string[] {","}, StringSplitOptions.None);
              
             PlayerParty[i] = new Breakthrough();
@@ -281,18 +280,21 @@ public class BattleSystem : MonoBehaviour
     }
 
     IEnumerator checkOption(int option){
-        
+
+        Debug.Log("checkoption "+option);
         //update current HP after battle
-        File.WriteAllText(playerBTfile, string.Empty);  //clears file
-        Debug.Log("here");
+        //File.WriteAllText(playerBTfile, string.Empty);  //clears file
+        
         using (StreamWriter writer = new StreamWriter(playerBTfile,true)){
             foreach (Breakthrough p in PlayerParty){  //writes from data
                 writer.WriteLine(p.btID + "," +p.currentHP + "," + p.levelBT+",0" );
             }
-
+            
             if (enemyBreakThrough.correctOption == option){
+                
                 writer.WriteLine(""+enemyID + ",0," + enemyBreakThrough.levelBT+",5");
                 questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
+                Debug.Log("checkoption "+option);
             }else{
                 questionText.text = "Inorrect :( "+ enemyBreakThrough.nameBT + " got away";
             }
