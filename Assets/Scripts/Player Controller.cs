@@ -43,7 +43,6 @@ public class PlayerController : MonoBehaviour
     void Update()
     {   
         
-        Debug.Log(transform.position);
        if ((Physics2D.OverlapCircle(movePoint.position, 0.2f, whatSpawnsBreakThrough))){
             
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
@@ -68,7 +67,6 @@ public class PlayerController : MonoBehaviour
                 
                     } 
                     
-                    //Debug.Log(""+nextSpawnCount);
                 }
                 
             }

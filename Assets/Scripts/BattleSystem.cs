@@ -57,12 +57,16 @@ public class BattleSystem : MonoBehaviour
     string playerBTfile;
 
     int totalPartySize;
+    string spriteLocation1, spriteLocation2;
+    public Sprite sunSprite, neutronSprite, blackSprite, mitoSprite;
+    public GameObject playerSprite; 
 
     void Start()
     {
         playerBTfile = Application.dataPath + "/CSV/PlayerBT.csv";
 
-
+        spriteLocation1 = Application.dataPath + "/BTSprites/" ;
+        spriteLocation2 = "BT.png";
         //canSpawnFile = Application.dataPath + "/Saves/CanSpawn.txt";
 
         state = BattleState.START; 
@@ -111,7 +115,6 @@ public class BattleSystem : MonoBehaviour
             BreakthroughList[i].option2 = stats[14];
             BreakthroughList[i].option3 = stats[15];
             BreakthroughList[i].option4 = stats[16];
-            //Debug.Log("here " +stats[17]); 
             BreakthroughList[i].correctOption = int.Parse(stats[17]);
             
             //add sprite location somehow here
@@ -127,7 +130,7 @@ public class BattleSystem : MonoBehaviour
         
         PlayerParty = new Breakthrough[leng];
         totalPartySize = leng-1;
-        //Debug.Log(totalPartySize);
+
         for (int i =1; i< leng; i++){
             string[] stats = btString[i].Split(new string[] {","}, StringSplitOptions.None);
              
@@ -172,20 +175,17 @@ public class BattleSystem : MonoBehaviour
         //(Level 100 stat / 4) + ( ¾ level 100 stat * level/100  )
 
         Breakthrough adjustedBT = new Breakthrough(bt);
-        //Debug.Log(bt.maxHP);
+
         adjustedBT.maxHP = adjustToLevel(bt.maxHP, level);
         adjustedBT.resistance = adjustToLevel(bt.resistance, level);
         adjustedBT.damage = adjustToLevel(bt.damage, level);
         adjustedBT.speed = adjustToLevel(bt.resistance, level);
         
-
-        //Debug.Log("resistance " +adjustedBT.resistance);
         return adjustedBT;
     }
 
     int adjustToLevel(int val, int level){
         float corrected = (val/4f)+(3f/4f*val*(level/100f));
-        //Debug.Log((int)Math.Floor(corrected));
         return (int)Math.Floor(corrected);
     }
 
@@ -195,21 +195,29 @@ public class BattleSystem : MonoBehaviour
         ReadCSV();
         ReadPlayerBTCSV();
         
-        GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
+        //GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
         //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
-        playerBreakThrough = PlayerParty[1];
+        int l = 1;
+        while ( l <7 ){
+            if (PlayerParty[l].currentHP > 0){
+                playerBreakThrough = PlayerParty[l];
+                SetPlayerSprite(playerBreakThrough);
+                l=7;
+            }
+            l++;
+        }
+       
+
+        //playerGO.GetComponent<SpriteRenderer>().sprite = sunSprite;
 
         System.Random random = new System.Random();
-        enemyID = random.Next(1, 2); 
-        //Debug.Log(randomNumber);
+        enemyID = random.Next(1, 5); 
 
         GameObject enemyGO = Instantiate (enemyPrefab, enemyBattlestation);
 
         int enemyLvl = playerBreakThrough.levelBT;
-        //Debug.Log(BreakthroughList[enemyID].maxHP);
         enemyBreakThrough = levelAdjusted(BreakthroughList[enemyID], enemyLvl);
         enemyBreakThrough.currentHP =  enemyBreakThrough.maxHP;
-        //Debug.Log( BreakthroughList[enemyID].maxHP);
         enemyBreakThrough.levelBT = enemyLvl;
 
         dialogText.text = "You descovered the " + enemyBreakThrough.nameBT + "!";
@@ -316,13 +324,25 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(checkOption(4));
     }
     
+    public void SetPlayerSprite( Breakthrough breakT){
+         if (breakT.btID == 1){
+            playerSprite.GetComponent<SpriteRenderer>().sprite = sunSprite;
+        }else if(breakT.btID == 2){
+            playerSprite.GetComponent<SpriteRenderer>().sprite = neutronSprite;
+        }else if(breakT.btID == 3){
+            playerSprite.GetComponent<SpriteRenderer>().sprite = blackSprite;
+        }else{
+            playerSprite.GetComponent<SpriteRenderer>().sprite = mitoSprite;
+        }
+    }
     
     public void OnBT1Select(){
         if (PlayerParty[1].currentHP > 0){
             playerBreakThrough = PlayerParty[1];
             playerInfoPanel.SetHud(playerBreakThrough); 
             battleOptions.SetActive(true);
-            swapOptions.SetActive(false);     
+            swapOptions.SetActive(false);
+            SetPlayerSprite(playerBreakThrough);
         }else{
             btSelectText.text = "That BreakThrough is out of HP";  
         }
@@ -335,6 +355,7 @@ public class BattleSystem : MonoBehaviour
                 playerInfoPanel.SetHud(playerBreakThrough);
                 battleOptions.SetActive(true);
                 swapOptions.SetActive(false);
+                SetPlayerSprite(playerBreakThrough);
             }else{
               btSelectText.text = "That BreakThrough is out of HP";  
             }
@@ -352,8 +373,9 @@ public class BattleSystem : MonoBehaviour
                 playerInfoPanel.SetHud(playerBreakThrough); 
                 battleOptions.SetActive(true);
                 swapOptions.SetActive(false);
+                SetPlayerSprite(playerBreakThrough);
             }else{
-              btSelectText.text = "That BreakThrough is out of HP";  
+                btSelectText.text = "That BreakThrough is out of HP";  
             }
             
         }else{
@@ -368,7 +390,8 @@ public class BattleSystem : MonoBehaviour
                 playerBreakThrough = PlayerParty[4];
                 playerInfoPanel.SetHud(playerBreakThrough); 
                 battleOptions.SetActive(true);
-                swapOptions.SetActive(false);  
+                swapOptions.SetActive(false); 
+                SetPlayerSprite(playerBreakThrough);  
             }else{
               btSelectText.text = "That BreakThrough is out of HP";  
             }
@@ -386,6 +409,7 @@ public class BattleSystem : MonoBehaviour
                 playerInfoPanel.SetHud(playerBreakThrough); 
                 battleOptions.SetActive(true);
                 swapOptions.SetActive(false);
+                SetPlayerSprite(playerBreakThrough);
             }else{
               btSelectText.text = "That BreakThrough is out of HP";  
             }
@@ -402,6 +426,7 @@ public class BattleSystem : MonoBehaviour
                 playerInfoPanel.SetHud(playerBreakThrough); 
                 battleOptions.SetActive(true);
                 swapOptions.SetActive(false);
+                SetPlayerSprite(playerBreakThrough);
             }else{
               btSelectText.text = "That BreakThrough is out of HP";  
             }
@@ -442,7 +467,6 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator PlayerAttack(int moveNumber){
         
-        //Debug.Log("move used " + playerBreakThrough.moveIDs[moveNumber-1].nameM);
         bool isDead = enemyBreakThrough.TakeDamage(playerBreakThrough.damage * playerBreakThrough.moveIDs[moveNumber-1].power);
         
         enemyInfoPanel.SetHP(enemyBreakThrough, enemyBreakThrough.currentHP);
