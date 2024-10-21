@@ -43,11 +43,13 @@ public class BattleSystem : MonoBehaviour
     public GameObject attackOptions;
     public GameObject battleOptions;
     public GameObject swapOptions;
+    public GameObject replaceOptions;
     public GameObject questionOptions;
 
     public TMP_Text move1BtnT, move2BtnT, move3BtnT, move4BtnT;
     public TMP_Text option1BtnT, option2BtnT, option3BtnT, option4BtnT;
     public TMP_Text bt1, bt2, bt3, bt4, bt5, bt6;
+    public TMP_Text Rbt1, Rbt2, Rbt3, Rbt4, Rbt5, Rbt6;
 
     public UnityEngine.TextAsset textAssetData;
     //public UnityEngine.TextAsset playerPartyData;
@@ -198,15 +200,16 @@ public class BattleSystem : MonoBehaviour
         //GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
         //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
         int l = 1;
-        while ( l <7 ){
+        while ( l <PlayerParty.Length ){
             if (PlayerParty[l].currentHP > 0){
                 playerBreakThrough = PlayerParty[l];
                 SetPlayerSprite(playerBreakThrough);
-                l=7;
+                l=PlayerParty.Length;
             }
             l++;
         }
        
+      
 
         //playerGO.GetComponent<SpriteRenderer>().sprite = sunSprite;
 
@@ -326,7 +329,33 @@ public class BattleSystem : MonoBehaviour
     public void OnOption4Btn(){
         StartCoroutine(checkOption(4));
     }
-    
+    public void onReplaceBt1(){
+        PlayerParty[1] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt2(){
+        PlayerParty[2] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt3(){
+        PlayerParty[3] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt4(){
+        PlayerParty[4] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt5(){
+        PlayerParty[5] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt6(){
+        PlayerParty[6] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBtNo(){
+        StartCoroutine(playerWrite());
+    }
     void SetPlayerSprite( Breakthrough breakT){
         if (breakT.btID == 1){
             playerSprite.GetComponent<SpriteRenderer>().sprite = sunSprite;
@@ -337,6 +366,7 @@ public class BattleSystem : MonoBehaviour
         }else{
             playerSprite.GetComponent<SpriteRenderer>().sprite = mitoSprite;
         }
+        playerInfoPanel.SetHud(breakT);
     }
 
     void SetEnemySprite(Breakthrough e){
@@ -452,28 +482,47 @@ public class BattleSystem : MonoBehaviour
         
     }
     
+    
+    
     IEnumerator checkOption(int option){
 
-        
+        if (enemyBreakThrough.correctOption == option){
+            questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
+            yield return new WaitForSeconds(1.5f);   
+            if (PlayerParty.Length > 6){
+                battleOptions.SetActive(false);
+                replaceOptions.SetActive(true);
+
+                Rbt1.text = PlayerParty[1].nameBT;
+                Rbt2.text = PlayerParty[2].nameBT;
+                Rbt3.text = PlayerParty[3].nameBT;
+                Rbt4.text = PlayerParty[4].nameBT;
+                Rbt5.text = PlayerParty[5].nameBT;
+                Rbt6.text = PlayerParty[6].nameBT;
+               
+            }
+        }else{
+            questionText.text = "Inorrect :( "+ enemyBreakThrough.nameBT + " got away";
+            yield return new WaitForSeconds(1.5f);
+            StartCoroutine(playerWrite());
+        }
         //update current HP after battle
+        
+    }
+
+    IEnumerator playerWrite(){
+       
         File.WriteAllText(playerBTfile, string.Empty);  //clears file
         
         using (StreamWriter writer = new StreamWriter(playerBTfile,true)){
             
-            
             writer.WriteLine("ID,currentHP,levelBT,expNextLevel");
+            
+
             for(int i=1;i<PlayerParty.Length; i++ ){  //writes from data
                 writer.WriteLine(PlayerParty[i].btID + "," +PlayerParty[i].currentHP + "," + PlayerParty[i].levelBT+",0" );
             }
-            
-            if (enemyBreakThrough.correctOption == option){
                 
-                writer.WriteLine(""+enemyID + ",0," + enemyBreakThrough.levelBT+",5");
-                questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
-                
-            }else{
-                questionText.text = "Inorrect :( "+ enemyBreakThrough.nameBT + " got away";
-            }
         }
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene(1); 
@@ -497,6 +546,7 @@ public class BattleSystem : MonoBehaviour
         
         if (isDead){
            state = BattleState.WON;
+           playerBreakThrough.levelBT = playerBreakThrough.levelBT+1;
            StartCoroutine(EndBattle());
         }else{
             state = BattleState.ENEMYTURN;
@@ -524,7 +574,8 @@ public class BattleSystem : MonoBehaviour
         }else{
             dialogText.text = "You were defeated :(";
             yield return new WaitForSeconds(1f);
-            SceneManager.LoadScene(0);
+            dialogText.text = "Returning to the library to heal";
+            SceneManager.LoadScene(5);
         }
     }
 
@@ -543,8 +594,41 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         if (isDead){
-            state = BattleState.LOST; 
-            StartCoroutine(EndBattle());
+            
+            bool isOut = true;
+            int i = 1;
+            
+            while ( i <PlayerParty.Length ){
+                if (PlayerParty[i].currentHP > 0){
+                    isOut=false;
+                    i=PlayerParty.Length;
+                }
+                i++;
+            }
+
+            if(isOut){
+                state = BattleState.LOST; 
+                StartCoroutine(EndBattle());
+            } else{
+                dialogText.text = "Your " + playerBreakThrough.nameBT + " fainted!";
+                yield return new WaitForSeconds(1f);
+
+                i=1;
+                while ( i <PlayerParty.Length ){
+                if (PlayerParty[i].currentHP > 0){
+                    playerBreakThrough = PlayerParty[i];
+                    SetPlayerSprite(playerBreakThrough);
+                    
+                    i=PlayerParty.Length;
+                }
+                i++;
+            }
+                dialogText.text = playerBreakThrough.nameBT + " Swapped in";
+                yield return new WaitForSeconds(1f);
+                state = BattleState.PLAYERTURN;
+                PlayerTurn();
+            }
+            
         }else{
             state = BattleState.PLAYERTURN;
             PlayerTurn();

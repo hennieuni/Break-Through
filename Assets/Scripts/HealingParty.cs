@@ -101,6 +101,21 @@ public class HealingParty : MonoBehaviour
         
         ReadPlayerBTCSV();
         loaded = true;
+
+        bool isOut = true;
+        int i = 1;
+            
+        while ( i <PlayerParty.Length ){
+            if (PlayerParty[i].currentHP > 0){
+                isOut=false;
+                i=PlayerParty.Length;
+            }
+            i++;
+        }
+
+        if(isOut){
+            OnBtnYes();
+        }
     }
 
     public void OnBtnYes(){
@@ -132,6 +147,14 @@ public class HealingParty : MonoBehaviour
 
     IEnumerator LoadRoom(){
         yield return new WaitForSeconds(1.5f);
+        string playerPosFile = Application.dataPath + "/Saves/PlayerPos.txt";
+        if (!File.Exists(playerPosFile)){
+            File.WriteAllText(playerPosFile, "-6.5,2.5");
+        }else{
+            using (StreamWriter writer = new StreamWriter(playerPosFile,false)){
+            writer.WriteLine("-6.5,2.5");
+            }
+        }
         SceneManager.LoadScene(4);
     }
 

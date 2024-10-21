@@ -12,7 +12,7 @@ public class MainMenu : MonoBehaviour
 
         playerPosFile = Application.dataPath + "/Saves/PlayerPos.txt";
         if (!File.Exists(playerPosFile)){
-            File.WriteAllText(playerPosFile, "-9.499884,-1.5");
+            File.WriteAllText(playerPosFile, "-9.499884,-0.5");
         }else{
             using (StreamWriter writer = new StreamWriter(playerPosFile,false)){
             writer.WriteLine("-9.499884,-0.5");
