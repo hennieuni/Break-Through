@@ -8,7 +8,7 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 60f;
+    public float moveSpeed = 10f;
     public Transform movePoint;
   
 
@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
         
        if ((Physics2D.OverlapCircle(movePoint.position, 0.2f, whatSpawnsBreakThrough))){
             
-            transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed*Time.deltaTime );
             if (Vector3.Distance(transform.position, movePoint.position) == 0f){
                 
                 if (nextSpawnCount == 0){
