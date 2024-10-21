@@ -7282,7 +7282,7 @@ MonoBehaviour:
   attackOptions: {fileID: 899412323}
   battleOptions: {fileID: 503627733}
   swapOptions: {fileID: 1177246964}
-  replaceOptions: {fileID: 0}
+  replaceOptions: {fileID: 960248954}
   questionOptions: {fileID: 795028368}
   move1BtnT: {fileID: 1715922184}
   move2BtnT: {fileID: 751974209}
@@ -7298,6 +7298,12 @@ MonoBehaviour:
   bt4: {fileID: 908496078}
   bt5: {fileID: 909247281}
   bt6: {fileID: 932616676}
+  Rbt1: {fileID: 1642223112}
+  Rbt2: {fileID: 350134343}
+  Rbt3: {fileID: 1107854151}
+  Rbt4: {fileID: 1642239335}
+  Rbt5: {fileID: 694156268}
+  Rbt6: {fileID: 270200919}
   textAssetData: {fileID: 4900000, guid: f2de3b7e3520f1949ad50a6757498ae5, type: 3}
   movesData: {fileID: 4900000, guid: 254ee517e9a9f564daea380de720bc9e, type: 3}
   sunSprite: {fileID: 21300000, guid: 54601285bcfefd642a0f755d8d3c5237, type: 3}
