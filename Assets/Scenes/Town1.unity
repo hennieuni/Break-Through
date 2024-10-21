@@ -6700,8 +6700,8 @@ GameObject:
   - component: {fileID: 1102544229}
   - component: {fileID: 1102544228}
   - component: {fileID: 1102544230}
-  m_Layer: 8
-  m_Name: LoadArea1
+  m_Layer: 10
+  m_Name: LoadRoute1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -7,7 +7,7 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 15f;
+    public float moveSpeed = 30f;
     public Transform movePoint;
   
 
@@ -40,6 +40,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
+        
+        Debug.Log(transform.position);
        if ((Physics2D.OverlapCircle(movePoint.position, 0.2f, whatSpawnsBreakThrough))){
             
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
@@ -72,13 +74,22 @@ public class PlayerController : MonoBehaviour
         }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsTown1)){  //loads town 1
             //add if from rout 1 and if from healing room to change posAFterLoad
             Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
+
+            Scene currentScene = SceneManager.GetActiveScene ();
+            string sceneNeme = currentScene.name;
+
+            if (sceneNeme.Equals("HealingBuidling")){    //of loading town form healing building
+                posAfterLoad = new Vector3(16.5f,-10.5f,0);
+            }else if(sceneNeme.Equals("Route1")){           //if loading town form route1
+                posAfterLoad = new Vector3(-17.5f,1.5f,0);
+            }
             LoadTown1(posAfterLoad);
         }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsHealingRoom)){  //loads healing room
-            Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
+            Vector3 posAfterLoad = new Vector3(1.5f,-9.5f,0);
             LoadHealingRoom(posAfterLoad);
 
-        }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsRoute1)){
-            Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
+        }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsRoute1)){  //loads route 1
+            Vector3 posAfterLoad = new Vector3(26.5f,-5.5f,0);
             LoadRoute1(posAfterLoad);
         }else{
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
