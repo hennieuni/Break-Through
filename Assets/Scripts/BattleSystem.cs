@@ -49,6 +49,7 @@ public class BattleSystem : MonoBehaviour
     public TMP_Text move1BtnT, move2BtnT, move3BtnT, move4BtnT;
     public TMP_Text option1BtnT, option2BtnT, option3BtnT, option4BtnT;
     public TMP_Text bt1, bt2, bt3, bt4, bt5, bt6;
+    public TMP_Text Rbt1, Rbt2, Rbt3, Rbt4, Rbt5, Rbt6;
 
     public UnityEngine.TextAsset textAssetData;
     //public UnityEngine.TextAsset playerPartyData;
@@ -491,6 +492,14 @@ public class BattleSystem : MonoBehaviour
             if (PlayerParty.Length > 6){
                 battleOptions.SetActive(false);
                 replaceOptions.SetActive(true);
+
+                Rbt1.text = PlayerParty[1].nameBT;
+                Rbt2.text = PlayerParty[2].nameBT;
+                Rbt3.text = PlayerParty[3].nameBT;
+                Rbt4.text = PlayerParty[4].nameBT;
+                Rbt5.text = PlayerParty[5].nameBT;
+                Rbt6.text = PlayerParty[6].nameBT;
+               
             }
         }else{
             questionText.text = "Inorrect :( "+ enemyBreakThrough.nameBT + " got away";
