@@ -8,7 +8,7 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 30f;
+    public float moveSpeed = 60f;
     public Transform movePoint;
   
 
