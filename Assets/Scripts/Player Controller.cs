@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
+//using System.Numerics;
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,7 +17,9 @@ public class PlayerController : MonoBehaviour
     public LayerMask whatLoadsTown1;
     public LayerMask whatLoadsHealingRoom;
     public LayerMask whatLoadsRoute1;
+    public LayerMask whatLoadsHealingScreen;
     public string playerPosFile;
+
 
     int nextSpawnCount;
     string canSpawnFile;
@@ -33,7 +36,6 @@ public class PlayerController : MonoBehaviour
         LoadPlayerPos();
 
         nextSpawnCount = 4;
-
         
     }
 
@@ -48,7 +50,7 @@ public class PlayerController : MonoBehaviour
             if (Vector3.Distance(transform.position, movePoint.position) == 0f){
                 
                 if (nextSpawnCount == 0){
-                    SavePlayerPos();
+                    SavePlayerPos(new Vector3(0,0,0));
                     SceneManager.LoadScene(2);
                 }else{
                     if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f){
@@ -91,6 +93,13 @@ public class PlayerController : MonoBehaviour
         }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsRoute1)){  //loads route 1
             Vector3 posAfterLoad = new Vector3(26.5f,-5.5f,0);
             LoadRoute1(posAfterLoad);
+        }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsHealingScreen)){  //loads healinghud
+            SavePlayerPos(new Vector3(0,-1,0));
+            transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+            if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
+                SceneManager.LoadScene(5);        
+            }
+
         }else{
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
 
@@ -113,6 +122,8 @@ public class PlayerController : MonoBehaviour
         }
          
     }
+
+   
 
     void LoadTown1(Vector3 posAfterLoad){
         transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
@@ -140,9 +151,9 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene(1);        
         }
     }
-    void SavePlayerPos(){
-        float playerx = transform.position.x; 
-        float playery = transform.position.y;
+    void SavePlayerPos(Vector3 stagger){
+        float playerx = transform.position.x + stagger.x; 
+        float playery = transform.position.y + stagger.y;
         string playerxy =  playerx + "," + playery;
 
         if (!File.Exists(playerPosFile)){

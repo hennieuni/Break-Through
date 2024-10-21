@@ -7353,6 +7353,9 @@ MonoBehaviour:
   whatLoadsRoute1:
     serializedVersion: 2
     m_Bits: 1024
+  whatLoadsHealingScreen:
+    serializedVersion: 2
+    m_Bits: 2048
   playerPosFile: 
 --- !u!1 &1593490989
 GameObject:
