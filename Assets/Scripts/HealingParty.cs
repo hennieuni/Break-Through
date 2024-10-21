@@ -101,6 +101,21 @@ public class HealingParty : MonoBehaviour
         
         ReadPlayerBTCSV();
         loaded = true;
+
+        bool isOut = true;
+        int i = 1;
+            
+        while ( i <PlayerParty.Length ){
+            if (PlayerParty[i].currentHP > 0){
+                isOut=false;
+                i=PlayerParty.Length;
+            }
+            i++;
+        }
+
+        if(isOut){
+            OnBtnYes();
+        }
     }
 
     public void OnBtnYes(){
