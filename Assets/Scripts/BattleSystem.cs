@@ -130,7 +130,7 @@ public class BattleSystem : MonoBehaviour
         //string[] btString = playerPartyData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
         int leng = btString.Length;
         
-        PlayerParty = new Breakthrough[7];
+        PlayerParty = new Breakthrough[8];
         totalPartySize = leng-1;
 
         for (int i =1; i< leng; i++){
@@ -489,8 +489,8 @@ public class BattleSystem : MonoBehaviour
         if (enemyBreakThrough.correctOption == option){
             questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
             yield return new WaitForSeconds(1.5f);   
-            if (PlayerParty.Length > 7){
-
+            if (totalPartySize > 5){
+                Debug.Log("party size" + totalPartySize);
                 battleOptions.SetActive(false);
                 replaceOptions.SetActive(true);
 
@@ -500,11 +500,12 @@ public class BattleSystem : MonoBehaviour
                 Rbt4.text = PlayerParty[4].nameBT;
                 Rbt5.text = PlayerParty[5].nameBT;
                 Rbt6.text = PlayerParty[6].nameBT;
+                
                
             }else{
-                
-                PlayerParty[PlayerParty.Length-1] = enemyBreakThrough;
-                Debug.Log("Here");
+                totalPartySize++;
+                PlayerParty[totalPartySize] = enemyBreakThrough;
+                Debug.Log("enemyLoaded");
                 StartCoroutine(playerWrite());
             }
         }else{
@@ -525,9 +526,10 @@ public class BattleSystem : MonoBehaviour
             writer.WriteLine("ID,currentHP,levelBT,expNextLevel");
             
 
-            for(int i=1;i<PlayerParty.Length; i++ ){  //writes from data
+            for(int i=1;i<totalPartySize+1; i++ ){  //writes from data
                 writer.WriteLine(PlayerParty[i].btID + "," +PlayerParty[i].currentHP + "," + PlayerParty[i].levelBT+",0" );
             }
+            Debug.Log("lines written");
                 
         }
         yield return new WaitForSeconds(2f);
