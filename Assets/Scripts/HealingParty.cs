@@ -132,6 +132,14 @@ public class HealingParty : MonoBehaviour
 
     IEnumerator LoadRoom(){
         yield return new WaitForSeconds(1.5f);
+        string playerPosFile = Application.dataPath + "/Saves/PlayerPos.txt";
+        if (!File.Exists(playerPosFile)){
+            File.WriteAllText(playerPosFile, "-6.5,2.5");
+        }else{
+            using (StreamWriter writer = new StreamWriter(playerPosFile,false)){
+            writer.WriteLine("-6.5,2.5");
+            }
+        }
         SceneManager.LoadScene(4);
     }
 
