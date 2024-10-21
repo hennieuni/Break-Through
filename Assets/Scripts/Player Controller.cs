@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     public LayerMask whatStopsMove;
     public LayerMask whatSpawnsBreakThrough;
     public LayerMask whatLoadsTown1;
+    public LayerMask whatLoadsHealingRoom;
+    public LayerMask whatLoadsRoute1;
     public string playerPosFile;
 
     int nextSpawnCount;
@@ -68,15 +70,16 @@ public class PlayerController : MonoBehaviour
             }
             
         }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsTown1)){  //loads town 1
+            //add if from rout 1 and if from healing room to change posAFterLoad
+            Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
+            LoadTown1(posAfterLoad);
+        }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsHealingRoom)){  //loads healing room
+            Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
+            LoadHealingRoom(posAfterLoad);
 
-             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
-
-            if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
-                Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
-                ChangePlayerPos(posAfterLoad);
-                SceneManager.LoadScene(3);        
-            }
-
+        }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsRoute1)){
+            Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
+            LoadRoute1(posAfterLoad);
         }else{
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
 
@@ -100,6 +103,32 @@ public class PlayerController : MonoBehaviour
          
     }
 
+    void LoadTown1(Vector3 posAfterLoad){
+        transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+
+        if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
+            ChangePlayerPos(posAfterLoad);
+            SceneManager.LoadScene(3);        
+        }
+    }
+
+    void LoadHealingRoom(Vector3 posAfterLoad){
+        transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+
+        if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
+            ChangePlayerPos(posAfterLoad);
+            SceneManager.LoadScene(4);        
+        }
+    }
+
+    void LoadRoute1(Vector3 posAfterLoad){
+        transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+
+        if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
+            ChangePlayerPos(posAfterLoad);
+            SceneManager.LoadScene(1);        
+        }
+    }
     void SavePlayerPos(){
         float playerx = transform.position.x; 
         float playery = transform.position.y;

@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Town1
   layers:
   - Default
   - TransparentFX
@@ -14,8 +15,8 @@ TagManager:
   - Stop Movement
   - BreakThroughSpawn
   - LoadTown1
-  - 
-  - 
+  - LoadHealingRoom
+  - LoadRoute1
   - 
   - 
   - 
