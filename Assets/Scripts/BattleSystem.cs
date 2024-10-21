@@ -130,7 +130,7 @@ public class BattleSystem : MonoBehaviour
         //string[] btString = playerPartyData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
         int leng = btString.Length;
         
-        PlayerParty = new Breakthrough[leng];
+        PlayerParty = new Breakthrough[7];
         totalPartySize = leng-1;
 
         for (int i =1; i< leng; i++){
@@ -489,7 +489,8 @@ public class BattleSystem : MonoBehaviour
         if (enemyBreakThrough.correctOption == option){
             questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
             yield return new WaitForSeconds(1.5f);   
-            if (PlayerParty.Length > 6){
+            if (PlayerParty.Length > 7){
+
                 battleOptions.SetActive(false);
                 replaceOptions.SetActive(true);
 
@@ -500,6 +501,11 @@ public class BattleSystem : MonoBehaviour
                 Rbt5.text = PlayerParty[5].nameBT;
                 Rbt6.text = PlayerParty[6].nameBT;
                
+            }else{
+                
+                PlayerParty[PlayerParty.Length-1] = enemyBreakThrough;
+                Debug.Log("Here");
+                StartCoroutine(playerWrite());
             }
         }else{
             questionText.text = "Inorrect :( "+ enemyBreakThrough.nameBT + " got away";
