@@ -59,7 +59,7 @@ public class BattleSystem : MonoBehaviour
     int totalPartySize;
     string spriteLocation1, spriteLocation2;
     public Sprite sunSprite, neutronSprite, blackSprite, mitoSprite;
-    public GameObject playerSprite; 
+    public GameObject playerSprite, enemySprite; 
 
     void Start()
     {
@@ -213,12 +213,15 @@ public class BattleSystem : MonoBehaviour
         System.Random random = new System.Random();
         enemyID = random.Next(1, 5); 
 
-        GameObject enemyGO = Instantiate (enemyPrefab, enemyBattlestation);
+        //GameObject enemyGO = Instantiate (enemyPrefab, enemyBattlestation);
 
         int enemyLvl = playerBreakThrough.levelBT;
         enemyBreakThrough = levelAdjusted(BreakthroughList[enemyID], enemyLvl);
         enemyBreakThrough.currentHP =  enemyBreakThrough.maxHP;
         enemyBreakThrough.levelBT = enemyLvl;
+
+        SetEnemySprite(enemyBreakThrough);
+    
 
         dialogText.text = "You descovered the " + enemyBreakThrough.nameBT + "!";
 
@@ -324,8 +327,8 @@ public class BattleSystem : MonoBehaviour
         StartCoroutine(checkOption(4));
     }
     
-    public void SetPlayerSprite( Breakthrough breakT){
-         if (breakT.btID == 1){
+    void SetPlayerSprite( Breakthrough breakT){
+        if (breakT.btID == 1){
             playerSprite.GetComponent<SpriteRenderer>().sprite = sunSprite;
         }else if(breakT.btID == 2){
             playerSprite.GetComponent<SpriteRenderer>().sprite = neutronSprite;
@@ -333,6 +336,18 @@ public class BattleSystem : MonoBehaviour
             playerSprite.GetComponent<SpriteRenderer>().sprite = blackSprite;
         }else{
             playerSprite.GetComponent<SpriteRenderer>().sprite = mitoSprite;
+        }
+    }
+
+    void SetEnemySprite(Breakthrough e){
+        if (e.btID == 1){
+            enemySprite.GetComponent<SpriteRenderer>().sprite = sunSprite;
+        }else if(e.btID == 2){
+            enemySprite.GetComponent<SpriteRenderer>().sprite = neutronSprite;
+        }else if(e.btID == 3){
+            enemySprite.GetComponent<SpriteRenderer>().sprite = blackSprite;
+        }else{
+            enemySprite.GetComponent<SpriteRenderer>().sprite = mitoSprite;
         }
     }
     
