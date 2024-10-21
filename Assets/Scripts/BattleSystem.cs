@@ -490,7 +490,7 @@ public class BattleSystem : MonoBehaviour
             questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
             yield return new WaitForSeconds(1.5f);   
             if (totalPartySize > 5){
-                Debug.Log("party size" + totalPartySize);
+               
                 battleOptions.SetActive(false);
                 replaceOptions.SetActive(true);
 
@@ -505,7 +505,6 @@ public class BattleSystem : MonoBehaviour
             }else{
                 totalPartySize++;
                 PlayerParty[totalPartySize] = enemyBreakThrough;
-                Debug.Log("enemyLoaded");
                 StartCoroutine(playerWrite());
             }
         }else{
@@ -529,7 +528,7 @@ public class BattleSystem : MonoBehaviour
             for(int i=1;i<totalPartySize+1; i++ ){  //writes from data
                 writer.WriteLine(PlayerParty[i].btID + "," +PlayerParty[i].currentHP + "," + PlayerParty[i].levelBT+",0" );
             }
-            Debug.Log("lines written");
+            
                 
         }
         yield return new WaitForSeconds(2f);

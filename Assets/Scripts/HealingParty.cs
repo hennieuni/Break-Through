@@ -26,7 +26,6 @@ public class HealingParty : MonoBehaviour
 
     void ReadCSV(){
         string[] btString = textAssetData.text.Split(new string[] {"\n"}, StringSplitOptions.None);
-        Debug.Log("here");
         int leng = btString.Length;
         
         BreakthroughList = new Breakthrough[leng];
@@ -60,7 +59,7 @@ public class HealingParty : MonoBehaviour
         
         PlayerParty = new Breakthrough[leng];
         totalPartySize = leng-1;
-        //Debug.Log(totalPartySize);
+    
         for (int i =1; i< leng; i++){
             string[] stats = btString[i].Split(new string[] {","}, StringSplitOptions.None);
              
@@ -81,16 +80,13 @@ public class HealingParty : MonoBehaviour
         //(Level 100 stat / 4) + ( ¾ level 100 stat * level/100  )
 
         Breakthrough adjustedBT = new Breakthrough(bt);
-        //Debug.Log(bt.maxHP);
         adjustedBT.maxHP = adjustToLevel(bt.maxHP, level);
 
-        //Debug.Log("resistance " +adjustedBT.resistance);
         return adjustedBT;
     }
 
      int adjustToLevel(int val, int level){
         float corrected = (val/4f)+(3f/4f*val*(level/100f));
-        //Debug.Log((int)Math.Floor(corrected));
         return (int)Math.Floor(corrected);
     }
 
@@ -147,7 +143,8 @@ public class HealingParty : MonoBehaviour
 
     IEnumerator LoadRoom(){
         yield return new WaitForSeconds(1.5f);
-        string playerPosFile = Application.dataPath + "/Saves/PlayerPos.txt";
+
+         string playerPosFile = Application.dataPath + "/Saves/PlayerPos.txt";
         if (!File.Exists(playerPosFile)){
             File.WriteAllText(playerPosFile, "-6.5,2.5");
         }else{
