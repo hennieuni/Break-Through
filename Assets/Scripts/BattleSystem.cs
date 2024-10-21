@@ -43,6 +43,7 @@ public class BattleSystem : MonoBehaviour
     public GameObject attackOptions;
     public GameObject battleOptions;
     public GameObject swapOptions;
+    public GameObject replaceOptions;
     public GameObject questionOptions;
 
     public TMP_Text move1BtnT, move2BtnT, move3BtnT, move4BtnT;
@@ -207,6 +208,7 @@ public class BattleSystem : MonoBehaviour
             l++;
         }
        
+      
 
         //playerGO.GetComponent<SpriteRenderer>().sprite = sunSprite;
 
@@ -326,7 +328,33 @@ public class BattleSystem : MonoBehaviour
     public void OnOption4Btn(){
         StartCoroutine(checkOption(4));
     }
-    
+    public void onReplaceBt1(){
+        PlayerParty[1] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt2(){
+        PlayerParty[2] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt3(){
+        PlayerParty[3] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt4(){
+        PlayerParty[4] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt5(){
+        PlayerParty[5] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBt6(){
+        PlayerParty[6] = enemyBreakThrough;
+        StartCoroutine(playerWrite());
+    }
+    public void onReplaceBtNo(){
+        StartCoroutine(playerWrite());
+    }
     void SetPlayerSprite( Breakthrough breakT){
         if (breakT.btID == 1){
             playerSprite.GetComponent<SpriteRenderer>().sprite = sunSprite;
@@ -453,28 +481,39 @@ public class BattleSystem : MonoBehaviour
         
     }
     
+    
+    
     IEnumerator checkOption(int option){
 
-        
+        if (enemyBreakThrough.correctOption == option){
+            questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
+            yield return new WaitForSeconds(1.5f);   
+            if (PlayerParty.Length > 6){
+                battleOptions.SetActive(false);
+                replaceOptions.SetActive(true);
+            }
+        }else{
+            questionText.text = "Inorrect :( "+ enemyBreakThrough.nameBT + " got away";
+            yield return new WaitForSeconds(1.5f);
+            StartCoroutine(playerWrite());
+        }
         //update current HP after battle
+        
+    }
+
+    IEnumerator playerWrite(){
+       
         File.WriteAllText(playerBTfile, string.Empty);  //clears file
         
         using (StreamWriter writer = new StreamWriter(playerBTfile,true)){
             
-            
             writer.WriteLine("ID,currentHP,levelBT,expNextLevel");
+            
+
             for(int i=1;i<PlayerParty.Length; i++ ){  //writes from data
                 writer.WriteLine(PlayerParty[i].btID + "," +PlayerParty[i].currentHP + "," + PlayerParty[i].levelBT+",0" );
             }
-            
-            if (enemyBreakThrough.correctOption == option){
                 
-                writer.WriteLine(""+enemyID + ","+enemyBreakThrough.maxHP+"," + enemyBreakThrough.levelBT+",5");
-                questionText.text = "Correct! You caught "+ enemyBreakThrough.nameBT; 
-                
-            }else{
-                questionText.text = "Inorrect :( "+ enemyBreakThrough.nameBT + " got away";
-            }
         }
         yield return new WaitForSeconds(2f);
         SceneManager.LoadScene(1); 
