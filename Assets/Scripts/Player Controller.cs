@@ -4,17 +4,22 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
+//using System.Numerics;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 15f;
+    public float moveSpeed = 30f;
     public Transform movePoint;
   
 
     public LayerMask whatStopsMove;
     public LayerMask whatSpawnsBreakThrough;
     public LayerMask whatLoadsTown1;
+    public LayerMask whatLoadsHealingRoom;
+    public LayerMask whatLoadsRoute1;
+    public LayerMask whatLoadsHealingScreen;
     public string playerPosFile;
+
 
     int nextSpawnCount;
     string canSpawnFile;
@@ -31,20 +36,21 @@ public class PlayerController : MonoBehaviour
         LoadPlayerPos();
 
         nextSpawnCount = 4;
-
         
     }
 
     // Update is called once per frame
     void Update()
     {   
+        
+        Debug.Log(transform.position);
        if ((Physics2D.OverlapCircle(movePoint.position, 0.2f, whatSpawnsBreakThrough))){
             
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
             if (Vector3.Distance(transform.position, movePoint.position) == 0f){
                 
                 if (nextSpawnCount == 0){
-                    SavePlayerPos();
+                    SavePlayerPos(new Vector3(0,0,0));
                     SceneManager.LoadScene(2);
                 }else{
                     if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f){
@@ -68,13 +74,30 @@ public class PlayerController : MonoBehaviour
             }
             
         }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsTown1)){  //loads town 1
+            //add if from rout 1 and if from healing room to change posAFterLoad
+            Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
 
-             transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+            Scene currentScene = SceneManager.GetActiveScene ();
+            string sceneNeme = currentScene.name;
 
+            if (sceneNeme.Equals("HealingBuidling")){    //of loading town form healing building
+                posAfterLoad = new Vector3(16.5f,-10.5f,0);
+            }else if(sceneNeme.Equals("Route1")){           //if loading town form route1
+                posAfterLoad = new Vector3(-17.5f,1.5f,0);
+            }
+            LoadTown1(posAfterLoad);
+        }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsHealingRoom)){  //loads healing room
+            Vector3 posAfterLoad = new Vector3(1.5f,-9.5f,0);
+            LoadHealingRoom(posAfterLoad);
+
+        }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsRoute1)){  //loads route 1
+            Vector3 posAfterLoad = new Vector3(26.5f,-5.5f,0);
+            LoadRoute1(posAfterLoad);
+        }else if(Physics2D.OverlapCircle(movePoint.position, 0.2f, whatLoadsHealingScreen)){  //loads healinghud
+            SavePlayerPos(new Vector3(0,-1,0));
+            transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
             if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
-                Vector3 posAfterLoad = new Vector3(1.5f,-1.5f,0);
-                ChangePlayerPos(posAfterLoad);
-                SceneManager.LoadScene(3);        
+                SceneManager.LoadScene(5);        
             }
 
         }else{
@@ -100,9 +123,37 @@ public class PlayerController : MonoBehaviour
          
     }
 
-    void SavePlayerPos(){
-        float playerx = transform.position.x; 
-        float playery = transform.position.y;
+   
+
+    void LoadTown1(Vector3 posAfterLoad){
+        transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+
+        if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
+            ChangePlayerPos(posAfterLoad);
+            SceneManager.LoadScene(3);        
+        }
+    }
+
+    void LoadHealingRoom(Vector3 posAfterLoad){
+        transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+
+        if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
+            ChangePlayerPos(posAfterLoad);
+            SceneManager.LoadScene(4);        
+        }
+    }
+
+    void LoadRoute1(Vector3 posAfterLoad){
+        transform.position = Vector3.MoveTowards(transform.position, movePoint.position , moveSpeed*Time.deltaTime);
+
+        if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f){
+            ChangePlayerPos(posAfterLoad);
+            SceneManager.LoadScene(1);        
+        }
+    }
+    void SavePlayerPos(Vector3 stagger){
+        float playerx = transform.position.x + stagger.x; 
+        float playery = transform.position.y + stagger.y;
         string playerxy =  playerx + "," + playery;
 
         if (!File.Exists(playerPosFile)){

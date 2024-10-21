@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Town1.unity
     guid: c86ba8f8eb50cdf40b54962d377d3062
+  - enabled: 1
+    path: Assets/Scenes/HealingBuidling.unity
+    guid: 0f729baf5b51aa547920767e4ba12209
+  - enabled: 1
+    path: Assets/Scenes/HealingScreen.unity
+    guid: 58ea5a4f1c4a7b6469729a24507d91ae
   m_configObjects: {}
