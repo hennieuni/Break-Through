@@ -200,7 +200,7 @@ public class BattleSystem : MonoBehaviour
         //GameObject playerGO = Instantiate (playerPrefab, playerBattlestation);
         //playerBreakThrough = playerGO.GetComponent<Breakthrough>();
         int l = 1;
-        while ( l <PlayerParty.Length ){
+        while ( l <PlayerParty.Length-1 ){
             if (PlayerParty[l].currentHP > 0){
                 playerBreakThrough = PlayerParty[l];
                 SetPlayerSprite(playerBreakThrough);
@@ -564,6 +564,7 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator EndBattle(){
          
+        
         if (state == BattleState.WON){
             dialogText.text = "You defeated " + enemyBreakThrough.nameBT + "!";
             yield return new WaitForSeconds(1f);
@@ -605,15 +606,17 @@ public class BattleSystem : MonoBehaviour
             bool isOut = true;
             int i = 1;
             
-            while ( i <PlayerParty.Length ){
+            while ( i <PlayerParty.Length-1 ){
                 if (PlayerParty[i].currentHP > 0){
                     isOut=false;
-                    i=PlayerParty.Length;
+                    i=PlayerParty.Length-1;
+                    
                 }
                 i++;
             }
-
+            Debug.Log("here");
             if(isOut){
+                
                 state = BattleState.LOST; 
                 StartCoroutine(EndBattle());
             } else{
@@ -621,7 +624,7 @@ public class BattleSystem : MonoBehaviour
                 yield return new WaitForSeconds(1f);
 
                 i=1;
-                while ( i <PlayerParty.Length ){
+                while ( i <PlayerParty.Length-1 ){
                 if (PlayerParty[i].currentHP > 0){
                     playerBreakThrough = PlayerParty[i];
                     SetPlayerSprite(playerBreakThrough);
