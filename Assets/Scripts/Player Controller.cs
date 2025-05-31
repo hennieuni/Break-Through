@@ -20,6 +20,13 @@ public class PlayerController : MonoBehaviour
     public LayerMask whatLoadsHealingScreen;
     public string playerPosFile;
 
+    public Animator animator;
+    public bool horz = true;
+    public bool upward = false;
+    public bool downward = false;
+    public bool movement = false;
+    public bool rightway = true;
+
 
     int nextSpawnCount;
     string canSpawnFile;
@@ -42,7 +49,9 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
-        
+
+
+        //movement
        if ((Physics2D.OverlapCircle(movePoint.position, 0.2f, whatSpawnsBreakThrough))){
             
             transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed*Time.deltaTime );
@@ -118,6 +127,114 @@ public class PlayerController : MonoBehaviour
                 } 
             }
         }
+        
+        if (Vector3.Distance(transform.position, movePoint.position) == 0f){
+            movement = false;
+        }else{
+           movement = true;
+        }
+
+        Vector3 directionVector = (transform.position - movePoint.transform.position).normalized;//relational direction
+
+        if (directionVector.x>0){ //right
+            horz = true;
+            upward = false;
+            downward = false;
+            movement = true;  
+            
+        }
+
+        if (directionVector.x<0){ //left
+            horz = true;
+            upward = false;
+            downward = false;
+            movement = true;  
+            
+        }
+
+        if (directionVector.y<0){ //up
+            horz = false;
+            upward = true;
+            downward = false;
+            movement = true;  
+            
+        }
+
+        if (directionVector.y>0){ // down
+            horz = false;
+            upward = false;
+            downward = true;
+            movement = true;  
+            
+        }
+
+        //to flip or not to flip
+        if (directionVector.x>0){
+            if (rightway == true){
+                transform.localScale = new Vector3 (-1,1,1);
+                rightway = false; 
+            }
+        }else if ((directionVector.x==0)&& (directionVector.y==0)){ //stay where you are at 0
+
+        }else if((directionVector.x<0) || (directionVector.y>0) || (directionVector.y<0) ){
+            if (rightway == false){
+                transform.localScale = new Vector3 (1,1,1);
+                rightway = true; 
+            }
+        }
+
+        
+
+
+        /*
+        //updating triggers for animation
+       if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f){
+            horz = true;
+            upward = false;
+            downward = false;
+            movement = true;
+            
+            //modal flipping left and right
+            if (Input.GetAxisRaw("Horizontal") == -1f){  //move left flip sprite
+                if (rightway == true){
+                    transform.localScale = new Vector3 (-1,1,1);
+                    rightway = false;
+                }   
+            }
+            if ( (Input.GetAxisRaw("Horizontal") == 1f) || (Input.GetAxisRaw("Vertical") == 1f) || (Input.GetAxisRaw("Vertical") == -1f) ){  //any direction but left
+                if (rightway == false){
+                    transform.localScale = new Vector3 (1,1,1);
+                    rightway = true;
+                }   
+            }
+
+       }
+
+       if (Input.GetAxisRaw("Vertical") == 1f){
+            horz = false;
+            upward = true;
+            downward = false;
+            movement = true;
+       }
+
+        if (Input.GetAxisRaw("Vertical") == -1f){
+            horz = false;
+            upward = false;
+            downward = true;
+            movement = true;
+
+        }
+
+        if ((Input.GetAxisRaw("Vertical") == 0f) && (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 0f)){
+            movement = false;
+        }
+        */
+
+        // set triggers
+        animator.SetBool("Up", upward);
+        animator.SetBool("Down", downward);
+        animator.SetBool("horiz", horz);
+        animator.SetBool("Moving", movement);
          
     }
 
