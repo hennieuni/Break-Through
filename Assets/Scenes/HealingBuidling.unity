@@ -4077,6 +4077,7 @@ GameObject:
   m_Component:
   - component: {fileID: 825767152}
   - component: {fileID: 825767153}
+  - component: {fileID: 825767154}
   m_Layer: 0
   m_Name: hero-idle-back
   m_TagString: Untagged
@@ -4151,6 +4152,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &825767154
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825767151}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1714f85b030ceb54584dbee1befebe42, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &856150736
 GameObject:
   m_ObjectHideFlags: 0
@@ -6252,7 +6274,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   playerPosFile: 
-  Hud: {fileID: 856150736}
+  animator: {fileID: 825767154}
 --- !u!1 &1500672258
 GameObject:
   m_ObjectHideFlags: 0
